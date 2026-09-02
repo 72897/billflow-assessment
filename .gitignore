@@ -48,3 +48,6 @@ public/uploads/
 
 # test output
 coverage/
+
+# local agent tooling (dev-server launch config)
+.claude/

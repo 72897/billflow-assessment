@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ArrowRight, FileText, Plus, Users } from 'lucide-react'
+import { AiBrief } from '@/components/dashboard/ai-brief'
 import { IncomeChart } from '@/components/dashboard/income-chart'
 import { NeedsAttention } from '@/components/dashboard/needs-attention'
 import { StatCards } from '@/components/dashboard/stat-cards'
@@ -8,7 +9,10 @@ import { PageHeader } from '@/components/shell/page-header'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeaderRow, CardTitle } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
+import { briefContextFrom, briefFromRules } from '@/lib/ai/dashboard-brief'
+import { hasAiProvider } from '@/lib/ai/groq'
 import { requireUserPage } from '@/lib/auth'
+import { todayIsoDate } from '@/lib/invoice/status'
 import { getDashboardData } from '@/lib/repositories/dashboard'
 import { pluralise } from '@/lib/utils'
 
@@ -92,6 +96,16 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <div className="grid gap-4 sm:gap-5">
+          {/*
+           * Explained on the server from the same figures the cards show, so the
+           * summary is on screen with them rather than a second later. The client
+           * asks the model to rewrite it only when a key is configured.
+           */}
+          <AiBrief
+            initial={briefFromRules(briefContextFrom(stats, needsAttention, todayIsoDate()))}
+            upgradable={hasAiProvider()}
+          />
+
           <StatCards stats={stats} />
 
           <div className="grid gap-4 sm:gap-5 lg:grid-cols-[1.35fr_1fr]">

@@ -28,6 +28,7 @@ import {
 import { addDaysToIsoDate, cn, formatDate } from '@/lib/utils'
 import { createInvoiceSchema } from '@/lib/validation/invoice'
 import type { InvoiceDetail } from '@/types'
+import { AiComposer } from './ai-composer'
 import { toInvoicePayload, type InvoiceFormValues } from './invoice-form-values'
 import { InvoiceLineItems } from './invoice-line-items'
 
@@ -147,6 +148,14 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
       <form onSubmit={form.handleSubmit((values) => submit(values, 'draft'))} noValidate>
         <div className="grid items-start gap-4 lg:grid-cols-3">
           <div className="grid min-w-0 gap-4 lg:col-span-2">
+            {/*
+             * Create only. On an edit the draft would replace line items that have
+             * already been sent to somebody, and an Undo button is thin protection
+             * against that. Hidden with no clients too, so the "add your first
+             * client" nudge below is the only thing to do on an empty account.
+             */}
+            {editing || noClients ? null : <AiComposer />}
+
             <Card>
               <CardContent className="grid gap-4 pt-5">
                 <FormError message={formError} />

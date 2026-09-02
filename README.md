@@ -3,8 +3,8 @@
 Invoicing for freelancers and small studios. Create a client, build an invoice,
 send it as a link, and get paid — without the client needing an account.
 
-Built as a full-stack technical assessment: Next.js 15 App Router, React 19,
-TypeScript (strict), Tailwind, and PostgreSQL with real migration files.
+Built with Next.js 15 App Router, React 19, TypeScript (strict), Tailwind, and
+PostgreSQL with real migration files.
 
 ---
 
@@ -13,7 +13,7 @@ TypeScript (strict), Tailwind, and PostgreSQL with real migration files.
 | | |
 |---|---|
 | **App** | _fill in after deploying — see [DEPLOY.md](DEPLOY.md)_ |
-| **Demo login** | `demo@billflow.app` / `Billflow@123` |
+| **Sign in** | `demo@billflow.app` / `Billflow@123` |
 | **Public invoice link** | `/i/<token>` — printed by `npm run db:seed`, also copyable from any sent invoice |
 
 The seeded account opens on a dashboard with real history: 6 clients, 14
@@ -65,10 +65,11 @@ rate limit still fails loudly, because there retrying is exactly right. Reminder
 can be re-sent on overdue invoices.
 
 **Public invoice page** — `/i/<token>` renders the invoice to anyone with the
-link, no account and no session. It can be paid there (simulated card / bank
-transfer), which writes a payment, flips the invoice to paid, emails a receipt,
-and shows a downloadable receipt. Double-submits are absorbed by an idempotency
-key; a stale tab that posts an out-of-date total is rejected rather than
+link, no account and no session. It can be paid there (card / bank transfer, no
+processor wired up), which writes a payment, flips the invoice to paid, emails a
+receipt, and shows a downloadable receipt. Double-submits are absorbed by an
+idempotency key; a stale tab that posts an out-of-date total is rejected rather
+than
 under-charging. Revoking a link (nulling `public_token`) turns the page into a
 404 immediately.
 
@@ -76,6 +77,39 @@ under-charging. Revoking a link (nulling `public_token`) turns the page into a
 comparison, an income chart (Recharts) switchable between this month, last 30
 days, this year and last 12 months, recent invoices, and a "needs attention"
 list of what to chase.
+
+**AI assistant** — two features, one provider (Groq), both optional and both
+degrading to something real rather than disappearing when no key is set.
+
+*Invoice composer.* On `/invoices/new`, describe the job — or dictate it — and
+the client, line items, tax, discount and due date fill themselves in:
+
+> `create an invoice for acme technologies for website redesign ₹25,000 and seo`
+> `setup ₹5,000, add 10% discount, 18% gst and make it due after 14 days`
+
+…becomes two line items at 25,000 and 5,000, a 10% discount, 18% tax and a due
+date 14 days out. Dictation records in the browser, transcribes with
+`whisper-large-v3-turbo`, drops the transcript into the same textarea and drafts
+from it. Nothing is stored: the draft lands in the form you would have typed
+into, so it can be corrected before saving, and one Undo puts everything back.
+The model cannot write to the database, cannot pick a client that is not yours
+(ids come only from your own client list), and never does the arithmetic —
+amounts are recomputed with the app's money helpers and again on the server at
+save time.
+
+*Dashboard summary.* The card above the stat cards explains what came in, what is
+owed and what is worth chasing, then links to the three next actions. Each
+recommendation's destination comes from a closed list of routes, so the model
+never writes a URL. The figures are computed by Postgres and formatted before
+they are handed over, so it narrates arithmetic it never performed.
+
+With no `GROQ_API_KEY`, both fall back to a local rules parser — regex and a
+lookup table, no network — which handles the common shapes and is covered by
+23 unit tests. The dashboard summary is server-rendered from those rules on every
+load and the model's version replaces it when it arrives, so the card is never a
+skeleton and a failed model call is invisible. Failures are sorted into three
+kinds (bad input → 422, service busy → 503 with a retry, no key → a fact about
+the deployment) so the message you get is the one you can act on.
 
 **Settings** — business name, address, contact details, logo upload, currency
 (8 supported) and invoice-number prefix. All of it flows onto the invoice, the
@@ -126,6 +160,7 @@ and `.env.example` contains only placeholders.
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | No | Default to `smtp.gmail.com`, `465` and implicit TLS. For port 587 set `SMTP_SECURE=false` (STARTTLS). |
 | `RESEND_API_KEY` | No | Used when no SMTP mailbox is set. An account without a verified domain may only deliver to the address that owns it — BillFlow treats that as permanent and captures to the outbox. |
 | `EMAIL_FROM` | No | Sender identity, e.g. `BillFlow <invoices@yourdomain.com>`. Under SMTP the authenticated mailbox always wins (servers reject or rewrite an address you have not signed in as), so only the display name is used. |
+| `GROQ_API_KEY` | No | Turns on the AI invoice composer, dictation and the model-written dashboard summary. Blank → the local rules parser answers instead, so both features still work. |
 | `SEED_DEMO_EMAIL` / `SEED_DEMO_PASSWORD` | No | Credentials `npm run db:seed` creates. |
 
 With none of the email variables set, nothing is lost and nothing is faked: each
@@ -172,7 +207,7 @@ total is only ever used as an optimistic-concurrency check.
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm test` | Vitest — 122 tests across calc, money, validation, invoices, clients, settings, auth |
+| `npm test` | Vitest — 145 tests across calc, money, validation, the AI parsers, invoices, clients, settings, auth |
 
 The test suite runs against a throwaway PGlite database, so it needs no
 services. Integration coverage includes double-pay idempotency, stale-total
@@ -187,10 +222,11 @@ derivation.
 src/app/(app)/       authenticated screens — dashboard, clients, invoices, settings
 src/app/(auth)/      login, signup
 src/app/i/[token]/   the public invoice — no session, no sidebar, no sign-up wall
-src/app/api/         25 route handlers (all mutations)
+src/app/api/         27 route handlers — every mutation, plus the two AI endpoints and the dashboard brief
 src/components/      ui primitives, plus feature folders (invoices, clients, dashboard, public)
 src/lib/repositories one module per aggregate; every query takes a userId
 src/lib/validation/  zod schemas shared by client forms and server handlers
+src/lib/ai/          groq client, invoice draft + dashboard brief, and their no-key rules parsers
 src/lib/{money,invoice,pdf,email,db}
 db/migrations/       numbered SQL
 scripts/             migrate, seed, reset, inspect
@@ -254,12 +290,14 @@ between origins does not invalidate a link.
 - Totals are recalculated server-side on every write.
 - No credentials in the repository; `.env*.local` is ignored.
 
-## Simulated payment
+## Payments
 
 Paying on the public page does not contact a payment processor and collects no
 card details — it records a payment with a reference, marks the invoice paid and
-issues a receipt. This is stated on the page itself so a reviewer is never
-misled. Swapping in a real processor means replacing one repository call.
+issues a receipt. The page says so in plain words, so nobody is left thinking
+money has moved. Swapping in Stripe or Razorpay means replacing one repository
+call: the row locking, the payment ledger and the idempotency key that makes a
+double-tapped Pay button settle once are already in place.
 
 
 

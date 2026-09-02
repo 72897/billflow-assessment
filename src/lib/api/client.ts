@@ -40,12 +40,16 @@ const JSON_HEADERS = { 'Content-Type': 'application/json' }
 
 /** Calls an endpoint and returns `data`, or throws `ApiError`. */
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
+  // FormData sets its own Content-Type, boundary and all. Overriding it with
+  // application/json produces a body the server cannot parse.
+  const sendsJson = init.body !== undefined && init.body !== null && !(init.body instanceof FormData)
+
   let response: Response
   try {
     response = await fetch(path, {
       credentials: 'same-origin',
       ...init,
-      headers: init.body ? { ...JSON_HEADERS, ...init.headers } : init.headers,
+      headers: sendsJson ? { ...JSON_HEADERS, ...init.headers } : init.headers,
     })
   } catch {
     // A dropped connection is not a server error, and saying so helps: the user
