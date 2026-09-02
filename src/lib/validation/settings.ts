@@ -29,7 +29,7 @@ export const settingsSchema = z.object({
     .int({ message: 'Next invoice number must be a whole number' })
     .min(1, { message: 'Next invoice number must be 1 or higher' })
     .max(999_999, { message: 'Next invoice number is too large' }),
-  defaultTaxRate: decimalField({ label: 'Default tax rate', scale: 2, min: 0, max: 10_000 }).default(0),
+  defaultTaxRate: decimalField({ label: 'Default tax rate', scale: 2, min: 0, max: 10_000, blankAs: 0 }).default(0),
   defaultNotes: optionalText('Default notes', 2000),
   paymentTermsDays: z.coerce
     .number({ invalid_type_error: 'Payment terms must be a number' })

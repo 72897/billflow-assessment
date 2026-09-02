@@ -52,6 +52,17 @@ interface DecimalOptions {
   max?: number
   /** Reject exactly zero (used for quantity). */
   exclusiveMin?: number
+  /**
+   * What an empty box means, for the fields where empty is an answer rather than
+   * an omission. Discount and tax are optional, so their inputs start blank and
+   * stay blank on most invoices - and the browser validates the same schema
+   * against the raw form values, where a cleared field is `''` and not
+   * `undefined`, so `.default()` never sees it. Without this, "no discount"
+   * failed as "Discount must be a number" and the invoice could not be saved at
+   * all. Left undefined elsewhere, so a blank rate or quantity still has to be
+   * filled in rather than quietly becoming zero.
+   */
+  blankAs?: number
 }
 
 /**
@@ -62,6 +73,8 @@ interface DecimalOptions {
  */
 export function decimalField(options: DecimalOptions) {
   return z.union([z.string(), z.number()]).transform((raw, ctx) => {
+    if (options.blankAs !== undefined && typeof raw === 'string' && raw.trim() === '') return options.blankAs
+
     const parsed = parseDecimalToMinor(raw, options.scale)
     if (parsed === null) {
       ctx.addIssue({ code: z.ZodIssueCode.custom, message: `${options.label} must be a number` })

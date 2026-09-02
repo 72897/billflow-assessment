@@ -87,6 +87,23 @@ describe('invoice schema', () => {
       .toBe(500_000)
   })
 
+  it('reads a blank discount and tax as none, and still rejects a blank rate', () => {
+    // What the form actually holds on an invoice with no discount and no tax:
+    // cleared boxes are '', which is not `undefined`, so `.default()` never sees
+    // them. The browser validates these same schemas against the raw values, so
+    // treating '' as an omission is what lets such an invoice be saved.
+    const parsed = createInvoiceSchema.parse(invoicePayload({ discountValue: '', taxRate: '   ' }))
+    expect(parsed.discountValue).toBe(0)
+    expect(parsed.taxRate).toBe(0)
+    expect(parsed.discountType).toBeNull()
+
+    // A line item is a different matter: a price left empty is unfinished work,
+    // not a price of nothing.
+    expect(() =>
+      createInvoiceSchema.parse(invoicePayload({ items: [{ description: 'Hour', quantity: '1', rate: '' }] })),
+    ).toThrow(/rate/i)
+  })
+
   it('checks the invoice number is a number a filing system can hold', () => {
     expect(createInvoiceSchema.parse(invoicePayload({ invoiceNumber: 'LUMEN/2026/07' })).invoiceNumber)
       .toBe('LUMEN/2026/07')
@@ -195,5 +212,8 @@ describe('send, payment, client, auth and settings schemas', () => {
       /1 or higher/i,
     )
     expect(() => settingsSchema.parse({ ...base, businessName: 'Lumen', paymentTermsDays: '400' })).toThrow(/365/i)
+
+    // "Leave blank if you do not charge tax", as the field's own hint puts it.
+    expect(settingsSchema.parse({ ...base, businessName: 'Lumen', defaultTaxRate: '' }).defaultTaxRate).toBe(0)
   })
 })

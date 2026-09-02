@@ -40,8 +40,8 @@ const baseInvoiceShape = {
     .min(1, { message: 'Add at least one line item' })
     .max(MAX_LINE_ITEMS, { message: `An invoice can hold at most ${MAX_LINE_ITEMS} line items` }),
   discountType: z.enum(['percentage', 'fixed']).nullish().default(null),
-  discountValue: decimalField({ label: 'Discount', scale: 2, min: 0, max: MAX_LINE_AMOUNT_MINOR }).default(0),
-  taxRate: decimalField({ label: 'Tax rate', scale: 2, min: 0, max: 10_000 }).default(0),
+  discountValue: decimalField({ label: 'Discount', scale: 2, min: 0, max: MAX_LINE_AMOUNT_MINOR, blankAs: 0 }).default(0),
+  taxRate: decimalField({ label: 'Tax rate', scale: 2, min: 0, max: 10_000, blankAs: 0 }).default(0),
   notes: optionalText('Notes', 2000),
 }
 
