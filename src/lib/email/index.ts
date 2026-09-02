@@ -15,6 +15,7 @@
  */
 
 import { mkdir, writeFile } from 'node:fs/promises'
+import os from 'node:os'
 import path from 'node:path'
 import { emailFrom, hasEmailProvider } from '@/lib/config'
 
@@ -47,10 +48,17 @@ function slug(value: string): string {
  * Writes the message to disk as a standalone HTML file with the envelope shown
  * at the top, so opening it answers "who was this sent to?" as well as "what did
  * it look like?".
+ *
+ * The project directory is tried first because that is where a developer will
+ * look for it. On a serverless host the bundle directory is read-only, so the
+ * temp directory is tried next, and if even that is refused the envelope is
+ * logged and the send still reports as an outbox delivery — the invoice has been
+ * marked sent and the share link works, and the caller already tells the user
+ * that no real email went out.
  */
 async function sendViaOutbox(message: EmailMessage): Promise<EmailResult> {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-')
-  const file = path.join(process.cwd(), OUTBOX_DIR, `${stamp}-${slug(message.subject) || 'message'}.html`)
+  const name = `${stamp}-${slug(message.subject) || 'message'}.html`
 
   const envelope = `<!doctype html>
 <meta charset="utf-8">
@@ -64,13 +72,22 @@ async function sendViaOutbox(message: EmailMessage): Promise<EmailResult> {
 </div>
 ${message.html}`
 
-  await mkdir(path.dirname(file), { recursive: true })
-  await writeFile(file, envelope, 'utf8')
-
   console.log(`[email] outbox → ${message.to} — "${message.subject}"`)
-  console.log(`[email] written to ${file}`)
 
-  return { transport: 'outbox', id: `outbox_${stamp}`, file }
+  for (const dir of [path.join(process.cwd(), OUTBOX_DIR), path.join(os.tmpdir(), 'billflow-mail')]) {
+    try {
+      const file = path.join(dir, name)
+      await mkdir(dir, { recursive: true })
+      await writeFile(file, envelope, 'utf8')
+      console.log(`[email] written to ${file}`)
+      return { transport: 'outbox', id: `outbox_${stamp}`, file }
+    } catch {
+      // Read-only filesystem — try the next location.
+    }
+  }
+
+  console.log('[email] nowhere writable; envelope not persisted')
+  return { transport: 'outbox', id: `outbox_${stamp}` }
 }
 
 async function sendViaResend(message: EmailMessage): Promise<EmailResult> {
