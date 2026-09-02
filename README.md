@@ -12,7 +12,7 @@ TypeScript (strict), Tailwind, and PostgreSQL with real migration files.
 
 | | |
 |---|---|
-| **App** | _see `DEPLOYED_URL` below_ |
+| **App** | _fill in after deploying — see [DEPLOY.md](DEPLOY.md)_ |
 | **Demo login** | `demo@billflow.app` / `Billflow@123` |
 | **Public invoice link** | `/i/<token>` — printed by `npm run db:seed`, also copyable from any sent invoice |
 
@@ -200,15 +200,17 @@ Postgres driver, the cookie name lives in its own zero-import module
 
 ## Deployment
 
-Deployed on Vercel with Supabase Postgres.
+Deployed on Vercel with Supabase Postgres. **[DEPLOY.md](DEPLOY.md) has the
+copy-pasteable version**; the outline is:
 
 1. Push to GitHub and import the repo on Vercel.
 2. Create a Supabase project. From **Connect → Session pooler** copy the
    connection string (the pooler resolves over IPv4; the direct
    `db.<ref>.supabase.co` host does not, which Vercel's build network needs).
 3. Set the environment variables on Vercel: `DATABASE_URL`, `SESSION_SECRET`,
-   `NEXT_PUBLIC_APP_URL` (the deployed origin), and optionally `RESEND_API_KEY` /
-   `EMAIL_FROM`.
+   and optionally `RESEND_API_KEY` / `EMAIL_FROM`. `NEXT_PUBLIC_APP_URL` is
+   optional on Vercel — `appUrl()` falls back to `VERCEL_PROJECT_PRODUCTION_URL`
+   so share links resolve to the deployed origin either way.
 4. Run the migrations and seed once against the hosted database:
    ```bash
    DATABASE_URL="<session-pooler-url>" npm run db:setup
@@ -217,8 +219,8 @@ Deployed on Vercel with Supabase Postgres.
    `anon` / `authenticated` grants, so Supabase's auto-generated REST API cannot
    reach any table. Verify with `npm run db:inspect`.
 
-Set `NEXT_PUBLIC_APP_URL` **before** seeding, or the share links stored in the
-demo data will point at `localhost`.
+Only the share *token* is stored in the database, never a full URL, so moving
+between origins does not invalidate a link.
 
 ---
 
