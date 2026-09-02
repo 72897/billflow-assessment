@@ -30,7 +30,7 @@ const SORT_OPTIONS = [
 ] as const
 
 /**
- * Screen 8 — the invoice list.
+ * Screen 8 - the invoice list.
  *
  * Search, status, client, sort and pagination are all resolved in one SQL
  * statement, deliberately: a large account must not ship every invoice to the

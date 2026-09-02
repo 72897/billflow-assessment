@@ -2,7 +2,7 @@
  * The public (unauthenticated) surface: one invoice, reachable only by its
  * share token.
  *
- * The projection here is deliberately narrow — it carries no ids, no user
+ * The projection here is deliberately narrow - it carries no ids, no user
  * information and no internal timeline. The token is the credential, so
  * revoking it (setting `public_token` to NULL) makes the URL 404 on the next
  * request with nothing else to clean up.
@@ -219,7 +219,7 @@ export interface PublicPaymentResult {
 
 /**
  * Settlement without a payment processor: no card is charged, but everything
- * around it is real — the invoice row is locked, the payment is written in the
+ * around it is real - the invoice row is locked, the payment is written in the
  * same transaction as the status change, and the idempotency key makes a
  * double-clicked Pay button a no-op (PAY-03). Dropping in Stripe or Razorpay
  * later means calling their intent API where the card is stamped below; the

@@ -1,12 +1,12 @@
 /**
- * The invoice itself — the document a client actually reads.
+ * The invoice itself - the document a client actually reads.
  *
  * One component serves three screens: the owner's detail page, the standalone A4
  * preview, and the public link. They must agree down to the punctuation, because
  * the whole point of a share link is that it shows the same invoice the owner is
  * looking at. The props are typed structurally rather than as `InvoiceDetail`,
- * so `PublicInvoice` — a deliberately narrower payload with no ids, no events
- * and no internal notes — satisfies them too.
+ * so `PublicInvoice` - a deliberately narrower payload with no ids, no events
+ * and no internal notes - satisfies them too.
  *
  * Everything here is server-rendered: no state, no effects, nothing shipped to
  * the browser. `src/lib/pdf` mirrors this layout for the download; this is the
@@ -193,7 +193,7 @@ function InvoiceDocument({ invoice, variant = 'card', className }: InvoiceDocume
       {paid ? (
         <p className="mt-5 flex items-center gap-2 rounded-md border border-success-border bg-success-subtle px-3 py-2.5 text-[13px] font-medium text-success">
           <Check className="size-4 shrink-0" aria-hidden />
-          Paid in full on {formatDate(invoice.paidAt)} — thank you.
+          Paid in full on {formatDate(invoice.paidAt)} - thank you.
         </p>
       ) : null}
 

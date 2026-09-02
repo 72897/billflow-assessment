@@ -40,8 +40,8 @@ const STATUS_TONE: Record<DisplayStatus, NonNullable<BadgeProps['tone']>> = {
 
 /**
  * The dot is the saturated version of the pill's own hue, which is the only
- * place a status colour appears at full strength. Everything else — the wash,
- * the hairline, the label — is dialled back, so a list of thirty invoices reads
+ * place a status colour appears at full strength. Everything else - the wash,
+ * the hairline, the label - is dialled back, so a list of thirty invoices reads
  * as one page rather than four competing colours.
  */
 const STATUS_DOT: Record<DisplayStatus, string> = {

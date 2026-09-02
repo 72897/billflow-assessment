@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 export interface DeleteClientButtonProps {
   client: { id: string; name: string; invoiceCount: number }
-  /** Where to go once the client is gone — the edit screen cannot stay put. */
+  /** Where to go once the client is gone - the edit screen cannot stay put. */
   redirectTo?: string
 }
 

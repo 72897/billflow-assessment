@@ -14,7 +14,7 @@ import { remindInvoiceSchema } from '@/lib/validation/invoice'
  *
  * Same ordering as sending: deliver first, then record the reminder, so the
  * "Reminded 2 times" count on the invoice only ever reflects mail that actually
- * went out. Held to a tighter limit than sending — a reminder loop pointed at a
+ * went out. Held to a tighter limit than sending - a reminder loop pointed at a
  * client's inbox is the one thing this endpoint must not enable.
  */
 export const POST = route(async (request, context: RouteContext<{ id: string }>) => {
@@ -38,7 +38,7 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     throw new InvoiceStateError('Send this invoice before reminding your client about it.', { status: 'draft' })
   }
   if (invoice.status === 'paid') {
-    throw new InvoiceStateError('This invoice is already paid — no reminder needed.', { status: 'paid' })
+    throw new InvoiceStateError('This invoice is already paid - no reminder needed.', { status: 'paid' })
   }
   if (!invoice.client.email) {
     throw new ValidationError('This client has no email address. Add one, or share the payment link instead.', {
@@ -62,7 +62,7 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     text,
     replyTo: invoice.business.businessEmail || undefined,
   }).catch((error: unknown) => {
-    // As with sending, a permanent rejection never arrives here — it has already
+    // As with sending, a permanent rejection never arrives here - it has already
     // become an outbox capture. This is a bad moment, so it is worth retrying,
     // and the reminder count is left untouched.
     throw new AppError('That reminder could not be sent. Please try again, or copy the link below and send it yourself.', {

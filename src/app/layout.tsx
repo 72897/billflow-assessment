@@ -17,14 +17,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl()),
   title: {
-    default: `${APP_NAME} — ${APP_TAGLINE}`,
+    default: `${APP_NAME} - ${APP_TAGLINE}`,
     template: `%s · ${APP_NAME}`,
   },
   description:
     'BillFlow is invoicing for freelancers and small studios: send a professional invoice in a minute, share a payment link, and see what you are owed at a glance.',
   applicationName: APP_NAME,
   openGraph: {
-    title: `${APP_NAME} — ${APP_TAGLINE}`,
+    title: `${APP_NAME} - ${APP_TAGLINE}`,
     description: 'Create invoices, share a payment link, and get paid faster.',
     siteName: APP_NAME,
     type: 'website',

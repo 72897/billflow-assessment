@@ -48,7 +48,7 @@ function Pagination({ page, perPage, total, totalPages, unit = 'results', classN
       )}
     >
       <p className="text-[13px] text-muted-foreground">
-        Showing <span className="font-medium text-foreground">{first}</span>–
+        Showing <span className="font-medium text-foreground">{first}</span>-
         <span className="font-medium text-foreground">{last}</span> of{' '}
         <span className="font-medium text-foreground">{total}</span> {unit}
       </p>

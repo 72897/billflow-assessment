@@ -7,7 +7,7 @@ import { getPublicInvoiceOrThrow } from '@/lib/repositories/public'
 /**
  * The client's copy of the PDF, from the share link.
  *
- * Byte-identical to the owner's download — same document, same adapter — so there
+ * Byte-identical to the owner's download - same document, same adapter - so there
  * is never a "which version did you look at?" conversation. Rate-limited a little
  * tighter than the page itself, since each request rasterises a document.
  */

@@ -29,7 +29,7 @@ TooltipContent.displayName = 'TooltipContent'
 
 /**
  * The common case in one component. A tooltip is never the only carrier of
- * information here — it repeats or expands on something already on screen,
+ * information here - it repeats or expands on something already on screen,
  * because it is unreachable on a touch device.
  */
 function Hint({

@@ -4,7 +4,7 @@ export interface EmptyStateProps {
   icon?: React.ReactNode
   title: string
   description?: React.ReactNode
-  /** The primary way out of the empty state — creating the first thing. */
+  /** The primary way out of the empty state - creating the first thing. */
   action?: React.ReactNode
   secondaryAction?: React.ReactNode
   className?: string

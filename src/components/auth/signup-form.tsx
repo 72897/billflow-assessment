@@ -33,7 +33,7 @@ function SignupForm() {
     try {
       await api.post('/api/auth/signup', values)
       // Signup signs you in, so go straight to the dashboard with a full
-      // navigation — the same reasoning as sign-in.
+      // navigation - the same reasoning as sign-in.
       window.location.assign('/dashboard')
     } catch (error) {
       setFormError(applyFieldErrors(form.setError, error, ['fullName', 'email', 'password']))
@@ -87,7 +87,7 @@ function SignupForm() {
 
           <p className="mt-4 text-2xs leading-relaxed text-muted-foreground">
             You will land on your dashboard already signed in. Your business name, logo and currency can be set up
-            later in Settings — invoices work with the defaults until then.
+            later in Settings - invoices work with the defaults until then.
           </p>
         </CardContent>
       </Card>

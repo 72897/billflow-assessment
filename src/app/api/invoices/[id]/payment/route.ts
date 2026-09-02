@@ -6,7 +6,7 @@ import { isValidUuid } from '@/lib/utils'
 import { recordPaymentSchema } from '@/lib/validation/invoice'
 
 /**
- * "Mark as paid" — the owner recording money that arrived out of band (a bank
+ * "Mark as paid" - the owner recording money that arrived out of band (a bank
  * transfer, cash, a card machine). Shares the settlement path with the public
  * payment page, so both write a `payments` row and flip the invoice inside one
  * transaction, and both are idempotent (PAY-04).

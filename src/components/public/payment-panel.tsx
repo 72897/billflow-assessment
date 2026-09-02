@@ -31,7 +31,7 @@ const METHOD_LABELS: Record<string, string> = {
 }
 
 /**
- * Screens 17 and 19 — the amount, the Pay button, and the receipt that replaces
+ * Screens 17 and 19 - the amount, the Pay button, and the receipt that replaces
  * them both once the money is in.
  *
  * This is the only interactive part of the public page; the invoice underneath it
@@ -96,7 +96,7 @@ function PaymentPanel({
           </span>
           <div className="min-w-0 flex-1">
             <h1 className="text-base font-semibold tracking-[-0.01em] sm:text-lg">
-              {result ? 'Payment received — thank you' : `Invoice ${invoiceNumber} is paid`}
+              {result ? 'Payment received - thank you' : `Invoice ${invoiceNumber} is paid`}
             </h1>
             <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
               {settled

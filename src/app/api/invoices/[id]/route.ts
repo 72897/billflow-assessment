@@ -20,7 +20,7 @@ export const GET = route(async (request, context: Context) => {
 
 /**
  * Drafts edit freely. A sent invoice needs `confirmSentEdit`, and a paid one
- * cannot be edited at all — both answered as 409 `invalid_invoice_state`, which
+ * cannot be edited at all - both answered as 409 `invalid_invoice_state`, which
  * the UI turns into a confirmation dialog or an explanation (INV-12).
  */
 export const PATCH = route(async (request, context: Context) => {

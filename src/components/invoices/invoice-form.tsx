@@ -46,7 +46,7 @@ const DUE_PRESETS = [7, 14, 30] as const
  *
  * Two things make this form worth reading. First, totals are computed here by the
  * same `calculateInvoice` the server uses before writing, so what you watch add up
- * while typing is what gets stored — and the server still recalculates, so a
+ * while typing is what gets stored - and the server still recalculates, so a
  * tampered payload changes nothing. Second, the resolver runs in `raw` mode: the
  * schema's transforms decide whether a value is *valid*, but the strings you typed
  * are what gets posted, and scaling to minor units happens once, server-side.
@@ -234,7 +234,7 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
                           <SelectContent>
                             {SUPPORTED_CURRENCIES.map((option) => (
                               <SelectItem key={option.code} value={option.code}>
-                                {option.code} — {option.symbol}
+                                {option.code} - {option.symbol}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -272,7 +272,7 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Notes</CardTitle>
-                <CardDescription>Printed under the totals — payment instructions, a PO number, a thank you.</CardDescription>
+                <CardDescription>Printed under the totals - payment instructions, a PO number, a thank you.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Field error={form.formState.errors.notes?.message}>
@@ -406,7 +406,7 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
         title="This invoice has already been sent"
         description={`Your client may be holding the version you sent${
           invoice?.sentAt ? ` on ${formatDate(invoice.sentAt)}` : ''
-        }. Saving changes your copy — send it again so they see the new one.`}
+        }. Saving changes your copy - send it again so they see the new one.`}
         confirmLabel="Save anyway"
         onConfirm={confirmSentEdit}
       />

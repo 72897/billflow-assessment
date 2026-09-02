@@ -44,8 +44,8 @@ async function main() {
   console.log(`  password ${report.password}`)
 
   console.log('\nPublic links (no login needed)')
-  console.log(`  pay      ${report.payableUrl ?? '—'}`)
-  console.log(`  receipt  ${report.receiptUrl ?? '—'}`)
+  console.log(`  pay      ${report.payableUrl ?? '-'}`)
+  console.log(`  receipt  ${report.receiptUrl ?? '-'}`)
   console.log('')
 }
 

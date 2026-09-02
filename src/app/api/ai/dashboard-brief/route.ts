@@ -11,7 +11,7 @@ import { getDashboardStats, getNeedsAttention } from '@/lib/repositories/dashboa
  *
  * The dashboard is the screen people return to most, and the summary of an
  * unchanged set of numbers is the same summary. Keying the cache on the figures
- * themselves — rather than on a clock — means a payment landing invalidates it
+ * themselves - rather than on a clock - means a payment landing invalidates it
  * immediately, while ten visits in an afternoon that change nothing cost one
  * model call. In-process and per-instance, like the rate limiter above it: this
  * is an optimisation, never the source of truth.
@@ -33,7 +33,7 @@ function fingerprint(context: BriefContext): string {
 /**
  * Explains the dashboard: what came in, what is owed, what to do next.
  *
- * Read-only in the strictest sense — two aggregate queries against the signed-in
+ * Read-only in the strictest sense - two aggregate queries against the signed-in
  * user's own rows, and a paragraph back. It cannot fail into an error state: with
  * no key, a rejected key or a timeout, the deterministic brief answers instead
  * and `source` says which one you are reading.

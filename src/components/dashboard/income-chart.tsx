@@ -20,7 +20,7 @@ const RANGES = Object.keys(RANGE_LABELS) as IncomeRange[]
 
 /**
  * Recharts writes these onto SVG presentation attributes, which do not resolve
- * `var()` reliably across browsers — so they are the only literals in the app,
+ * `var()` reliably across browsers - so they are the only literals in the app,
  * and they mirror `--primary`, `--border` and `--muted-foreground` exactly.
  */
 const CHART = {
@@ -45,8 +45,8 @@ interface DotProps {
 /**
  * A marker on the days that carry a payment, and nothing on the days that do not.
  *
- * Freelance income is spiky by nature — a handful of invoices clear in a month,
- * not a little every day — so over a 30-day window most points sit on the
+ * Freelance income is spiky by nature - a handful of invoices clear in a month,
+ * not a little every day - so over a 30-day window most points sit on the
  * baseline. Drawing every dot turns that into a row of 30 beads along the
  * bottom; drawing none (the Recharts default) leaves the few real payments as
  * hairline spikes that read as an empty chart. Marking only the non-zero days
@@ -85,7 +85,7 @@ export interface IncomeChartProps {
 
 /**
  * Income over time, with the range switcher refetching from `/api/dashboard`
- * rather than navigating — the rest of the page has not changed, so there is no
+ * rather than navigating - the rest of the page has not changed, so there is no
  * reason to re-render it.
  *
  * A failed refetch keeps the previous series on screen and puts the error inside
@@ -103,7 +103,7 @@ function IncomeChart({ income: initial, currency }: IncomeChartProps) {
    * The plot is drawn after mount, never during hydration.
    *
    * Recharts sizes itself by measuring its container, which on the server is
-   * zero-by-zero — so the SVG it renders into the HTML is not the SVG it renders
+   * zero-by-zero - so the SVG it renders into the HTML is not the SVG it renders
    * once the browser has a real width, and React 19 treats that as a failed
    * hydration and tears the subtree out. (It surfaces as a blank card and a
    * minified error #418 in the console.) Gating on mount means the first client
@@ -206,7 +206,7 @@ function IncomeChart({ income: initial, currency }: IncomeChartProps) {
                     /*
                      * No entry animation. Recharts withholds the dots until the
                      * sweep finishes, so an animated chart spends its first 1.5s
-                     * showing a line with no markers on it — and a dashboard that
+                     * showing a line with no markers on it - and a dashboard that
                      * redraws itself every time the range changes reads as slow
                      * rather than lively.
                      */
@@ -234,7 +234,7 @@ function IncomeChart({ income: initial, currency }: IncomeChartProps) {
 
           {hasIncome ? null : (
             <p className="px-4 pb-1 text-center text-2xs text-muted-foreground sm:-mt-2">
-              No payments landed in this period yet — the line fills in as invoices are paid.
+              No payments landed in this period yet - the line fills in as invoices are paid.
             </p>
           )}
         </div>

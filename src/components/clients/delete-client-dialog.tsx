@@ -20,7 +20,7 @@ export interface DeleteClientDialogProps {
  * Delete, or archive when deleting would destroy history (CL-07, CL-08).
  *
  * A client who has never been invoiced is deleted outright. A client with
- * invoices is archived instead — hard-deleting them would either take paid
+ * invoices is archived instead - hard-deleting them would either take paid
  * invoices with it or be refused by the foreign key, and neither is a useful
  * answer. The dialog says which of the two is about to happen *before* the user
  * commits, rather than reporting it afterwards.
@@ -52,7 +52,7 @@ function DeleteClientDialog({ open, onOpenChange, client, redirectTo }: DeleteCl
 
     toast.success(
       result.outcome === 'archived'
-        ? `${client.name} archived — ${pluralise(result.invoiceCount, 'invoice')} kept`
+        ? `${client.name} archived - ${pluralise(result.invoiceCount, 'invoice')} kept`
         : `${client.name} deleted`,
     )
 

@@ -19,13 +19,13 @@ import { cn, pluralise } from '@/lib/utils'
 export const metadata = { title: 'Client' }
 
 /**
- * Screen 7 — one client.
+ * Screen 7 - one client.
  *
  * Two questions get answered above the fold: how to reach them, and what they
  * owe. The invoice history below is the same `InvoiceTable` the list screen uses
  * with `showClient={false}`, since every row here has the same client.
  *
- * A missing id and another user's id both land on `notFound()` — the repository
+ * A missing id and another user's id both land on `notFound()` - the repository
  * scopes ownership in the WHERE clause, so a foreign id is indistinguishable from
  * a deleted one and nothing leaks about which ids exist (CL-09).
  */

@@ -1,5 +1,5 @@
 -- ============================================================================
--- BillFlow — 0001_init.sql
+-- BillFlow - 0001_init.sql
 -- Initial schema. Plain PostgreSQL: runs identically against a managed
 -- Postgres (Supabase / Neon / RDS) and against the embedded PGlite engine used
 -- for zero-setup local development.
@@ -24,7 +24,7 @@ $$ LANGUAGE plpgsql;
 
 
 -- ---------------------------------------------------------------------------
--- users — authentication identity + profile (the "freelancer")
+-- users - authentication identity + profile (the "freelancer")
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE users (
@@ -47,7 +47,7 @@ CREATE TRIGGER users_set_updated_at
 
 
 -- ---------------------------------------------------------------------------
--- sessions — server-side session store, so logout genuinely revokes access
+-- sessions - server-side session store, so logout genuinely revokes access
 -- Only the SHA-256 hash of the cookie token is persisted.
 -- ---------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ CREATE INDEX sessions_expires_at_idx ON sessions (expires_at);
 
 
 -- ---------------------------------------------------------------------------
--- business_settings — one row per user; drives invoice branding + numbering
+-- business_settings - one row per user; drives invoice branding + numbering
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE business_settings (
@@ -99,7 +99,7 @@ CREATE TRIGGER business_settings_set_updated_at
 
 
 -- ---------------------------------------------------------------------------
--- clients — people and businesses the user invoices
+-- clients - people and businesses the user invoices
 -- archived_at lets a client with invoice history be retired without breaking
 -- the historical record (see CL-08).
 -- ---------------------------------------------------------------------------
@@ -205,7 +205,7 @@ CREATE TRIGGER invoices_set_updated_at
 
 
 -- ---------------------------------------------------------------------------
--- invoice_items — ordered line items; amount is always quantity * rate
+-- invoice_items - ordered line items; amount is always quantity * rate
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE invoice_items (
@@ -229,7 +229,7 @@ CREATE INDEX invoice_items_invoice_position_idx ON invoice_items (invoice_id, po
 
 
 -- ---------------------------------------------------------------------------
--- payments — one row per settled (simulated) payment
+-- payments - one row per settled (simulated) payment
 -- idempotency_key makes a double-submitted payment a no-op instead of a
 -- duplicate charge (PAY-03).
 -- ---------------------------------------------------------------------------
@@ -261,7 +261,7 @@ CREATE INDEX payments_paid_at_idx ON payments (paid_at);
 
 
 -- ---------------------------------------------------------------------------
--- invoice_events — append-only audit trail powering the activity timeline
+-- invoice_events - append-only audit trail powering the activity timeline
 -- ---------------------------------------------------------------------------
 
 CREATE TABLE invoice_events (

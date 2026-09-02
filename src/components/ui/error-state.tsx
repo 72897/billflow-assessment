@@ -18,8 +18,8 @@ export interface ErrorStateProps {
 /**
  * The failure counterpart to `EmptyState`.
  *
- * An offline browser and a broken server need different words — "check your
- * connection" is useless advice when the connection is fine — so the icon and
+ * An offline browser and a broken server need different words - "check your
+ * connection" is useless advice when the connection is fine - so the icon and
  * copy come from the error when one is supplied.
  */
 function ErrorState({ title, description, error, onRetry, retryLabel = 'Try again', className, size = 'md' }: ErrorStateProps) {

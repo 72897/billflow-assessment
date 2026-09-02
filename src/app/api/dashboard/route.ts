@@ -7,7 +7,7 @@ import { dashboardQuerySchema } from '@/lib/validation/dashboard'
  * The dashboard in one round trip.
  *
  * The page itself renders on the server, so this endpoint exists for the chart's
- * range switcher — changing "This month" to "Last 12 months" refetches only the
+ * range switcher - changing "This month" to "Last 12 months" refetches only the
  * data, without a navigation.
  */
 export const GET = route(async (request) => {

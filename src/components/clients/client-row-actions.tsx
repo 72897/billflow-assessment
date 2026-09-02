@@ -24,7 +24,7 @@ export interface ClientRowActionsProps {
 /**
  * The per-row overflow menu on the clients list: view, edit, invoice, delete.
  *
- * It is a small client island inside a server-rendered table — the rows
+ * It is a small client island inside a server-rendered table - the rows
  * themselves ship no JavaScript. `asChild` on the menu items keeps them real
  * links, so middle-click and "open in new tab" behave the way a link should.
  */

@@ -1,7 +1,7 @@
 # BillFlow
 
 Invoicing for freelancers and small studios. Create a client, build an invoice,
-send it as a link, and get paid — without the client needing an account.
+send it as a link, and get paid - without the client needing an account.
 
 Built with Next.js 15 App Router, React 19, TypeScript (strict), Tailwind, and
 PostgreSQL with real migration files.
@@ -12,9 +12,9 @@ PostgreSQL with real migration files.
 
 | | |
 |---|---|
-| **App** | _fill in after deploying — see [DEPLOY.md](DEPLOY.md)_ |
+| **App** | _fill in after deploying - see [DEPLOY.md](DEPLOY.md)_ |
 | **Sign in** | `demo@billflow.app` / `Billflow@123` |
-| **Public invoice link** | `/i/<token>` — printed by `npm run db:seed`, also copyable from any sent invoice |
+| **Public invoice link** | `/i/<token>` - printed by `npm run db:seed`, also copyable from any sent invoice |
 
 The seeded account opens on a dashboard with real history: 6 clients, 14
 invoices across draft / sent / paid / overdue, 8 recorded payments and a
@@ -25,46 +25,46 @@ pay-without-login page can be opened straight away.
 
 ## What's built
 
-**Landing page** — `/` explains the product, shows the invoice UI, and links to
+**Landing page** - `/` explains the product, shows the invoice UI, and links to
 sign-up. Fully responsive.
 
-**Accounts** — email + password sign-up and login. Passwords are bcrypt-hashed
+**Accounts** - email + password sign-up and login. Passwords are bcrypt-hashed
 (cost 10). Sessions are random 32-byte tokens stored as SHA-256 digests in
 Postgres and carried in an httpOnly, SameSite=Lax cookie, so signing out revokes
 access server-side immediately. Every query is scoped by `user_id` in its `WHERE`
 clause, so another user's row and a deleted row are indistinguishable.
 
-**Clients** — full CRUD with a detail page showing that client's invoice history
+**Clients** - full CRUD with a detail page showing that client's invoice history
 and totals. Archive instead of hard delete when a client already has invoices,
 with restore.
 
-**Invoices** — unlimited line items, live totals as you type, per-invoice tax
+**Invoices** - unlimited line items, live totals as you type, per-invoice tax
 rate and discount (fixed amount or percentage), notes, payment terms. Statuses
-are `draft` / `sent` / `paid`, and **overdue is derived, never stored** — a
+are `draft` / `sent` / `paid`, and **overdue is derived, never stored** - a
 `invoice_display_status()` SQL function and its TypeScript twin both compute it
 from `due_date` and `status`, so an invoice becomes overdue on its own with no
 cron job and no one clicking anything.
 
-**Invoice list** — search, status filter, client filter and sorting, all executed
+**Invoice list** - search, status filter, client filter and sorting, all executed
 **in SQL on the server** and driven by URL search params, so every view is
 linkable and shareable. Paginated.
 
-**PDF + print** — every invoice downloads as a real PDF generated server-side
+**PDF + print** - every invoice downloads as a real PDF generated server-side
 with `@react-pdf/renderer`, and the on-screen invoice has its own print
 stylesheet (A4, 14 mm margins, chrome stripped) so Ctrl-P produces the same
 document.
 
-**Sending** — send by email or copy a shareable link. Email has three transports
-behind one function, picked by what is configured: SMTP (nodemailer — a plain
+**Sending** - send by email or copy a shareable link. Email has three transports
+behind one function, picked by what is configured: SMTP (nodemailer - a plain
 mailbox, so it reaches any recipient), Resend, or a built-in file "outbox" that
 writes the message to `./.mail/*.html` so the flow is fully demonstrable with no
-email account at all. A refusal that a retry cannot fix — a wrong app password,
-an unverified sending domain — degrades to the outbox and reports why, rather
+email account at all. A refusal that a retry cannot fix - a wrong app password,
+an unverified sending domain - degrades to the outbox and reports why, rather
 than offering a retry button that would hit the identical refusal; a timeout or a
 rate limit still fails loudly, because there retrying is exactly right. Reminders
 can be re-sent on overdue invoices.
 
-**Public invoice page** — `/i/<token>` renders the invoice to anyone with the
+**Public invoice page** - `/i/<token>` renders the invoice to anyone with the
 link, no account and no session. It can be paid there (card / bank transfer, no
 processor wired up), which writes a payment, flips the invoice to paid, emails a
 receipt, and shows a downloadable receipt. Double-submits are absorbed by an
@@ -73,15 +73,15 @@ than
 under-charging. Revoking a link (nulling `public_token`) turns the page into a
 404 immediately.
 
-**Dashboard** — earned / outstanding / overdue totals with a month-on-month
+**Dashboard** - earned / outstanding / overdue totals with a month-on-month
 comparison, an income chart (Recharts) switchable between this month, last 30
 days, this year and last 12 months, recent invoices, and a "needs attention"
 list of what to chase.
 
-**AI assistant** — two features, one provider (Groq), both optional and both
+**AI assistant** - two features, one provider (Groq), both optional and both
 degrading to something real rather than disappearing when no key is set.
 
-*Invoice composer.* On `/invoices/new`, describe the job — or dictate it — and
+*Invoice composer.* On `/invoices/new`, describe the job - or dictate it - and
 the client, line items, tax, discount and due date fill themselves in:
 
 > `create an invoice for acme technologies for website redesign ₹25,000 and seo`
@@ -93,7 +93,7 @@ date 14 days out. Dictation records in the browser, transcribes with
 from it. Nothing is stored: the draft lands in the form you would have typed
 into, so it can be corrected before saving, and one Undo puts everything back.
 The model cannot write to the database, cannot pick a client that is not yours
-(ids come only from your own client list), and never does the arithmetic —
+(ids come only from your own client list), and never does the arithmetic -
 amounts are recomputed with the app's money helpers and again on the server at
 save time.
 
@@ -103,20 +103,20 @@ recommendation's destination comes from a closed list of routes, so the model
 never writes a URL. The figures are computed by Postgres and formatted before
 they are handed over, so it narrates arithmetic it never performed.
 
-With no `GROQ_API_KEY`, both fall back to a local rules parser — regex and a
-lookup table, no network — which handles the common shapes and is covered by
+With no `GROQ_API_KEY`, both fall back to a local rules parser - regex and a
+lookup table, no network - which handles the common shapes and is covered by
 23 unit tests. The dashboard summary is server-rendered from those rules on every
 load and the model's version replaces it when it arrives, so the card is never a
 skeleton and a failed model call is invisible. Failures are sorted into three
 kinds (bad input → 422, service busy → 503 with a retry, no key → a fact about
 the deployment) so the message you get is the one you can act on.
 
-**Settings** — business name, address, contact details, logo upload, currency
+**Settings** - business name, address, contact details, logo upload, currency
 (8 supported) and invoice-number prefix. All of it flows onto the invoice, the
 PDF and the public page. Invoice numbers are allocated by a Postgres function
 holding a row lock, so two invoices created at the same instant cannot collide.
 
-**Everywhere** — loading skeletons (`loading.tsx` per route), empty states with a
+**Everywhere** - loading skeletons (`loading.tsx` per route), empty states with a
 next action, error boundaries, optimistic-free `router.refresh()` after
 mutations, keyboard-accessible dialogs, and a layout that works from 360 px up.
 
@@ -124,7 +124,7 @@ mutations, keyboard-accessible dialogs, and a layout that works from 360 px up.
 
 ## Local setup
 
-Requires Node 20+. **No database installation needed** — if `DATABASE_URL` is
+Requires Node 20+. **No database installation needed** - if `DATABASE_URL` is
 blank, BillFlow falls back to [PGlite](https://pglite.dev), a real PostgreSQL
 engine compiled to WebAssembly that keeps its data in `./.pgdata`. The same SQL
 migrations run in both modes.
@@ -148,7 +148,7 @@ To run against a real Postgres instead, put its connection string in
 ## Environment variables
 
 Copy `.env.example` to `.env.local`. **No real credentials are committed to this
-repository** — `.env.local` and every `.env*.local` variant are in `.gitignore`,
+repository** - `.env.local` and every `.env*.local` variant are in `.gitignore`,
 and `.env.example` contains only placeholders.
 
 | Variable | Required | Purpose |
@@ -158,7 +158,7 @@ and `.env.example` contains only placeholders.
 | `NEXT_PUBLIC_APP_URL` | Yes | Public origin used to build share links and email links. Must be the deployed origin in production, or share links will point at localhost. |
 | `SMTP_USER` / `SMTP_PASSWORD` | No | Mailbox used to send. The recommended setup: a plain mailbox reaches any recipient. With Gmail the password must be a [16-character app password](https://myaccount.google.com/apppasswords), not the account password. `EMAIL` / `EMAIL_PASSWORD` are accepted as aliases. |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | No | Default to `smtp.gmail.com`, `465` and implicit TLS. For port 587 set `SMTP_SECURE=false` (STARTTLS). |
-| `RESEND_API_KEY` | No | Used when no SMTP mailbox is set. An account without a verified domain may only deliver to the address that owns it — BillFlow treats that as permanent and captures to the outbox. |
+| `RESEND_API_KEY` | No | Used when no SMTP mailbox is set. An account without a verified domain may only deliver to the address that owns it - BillFlow treats that as permanent and captures to the outbox. |
 | `EMAIL_FROM` | No | Sender identity, e.g. `BillFlow <invoices@yourdomain.com>`. Under SMTP the authenticated mailbox always wins (servers reject or rewrite an address you have not signed in as), so only the display name is used. |
 | `GROQ_API_KEY` | No | Turns on the AI invoice composer, dictation and the model-written dashboard summary. Blank → the local rules parser answers instead, so both features still work. |
 | `SEED_DEMO_EMAIL` / `SEED_DEMO_PASSWORD` | No | Credentials `npm run db:seed` creates. |
@@ -193,7 +193,7 @@ db/migrations/optional/0004_supabase_lockdown.sql  revoke anon/authenticated gra
 | `npm run db:inspect` | Print tables, row counts, functions, RLS state, demo login and live share tokens |
 
 Money is stored as `numeric(14,2)` and handled in TypeScript as integer minor
-units — never a float. Tax rates are basis points, quantities thousandths.
+units - never a float. Tax rates are basis points, quantities thousandths.
 Totals are always recalculated on the server from the line items; a client-sent
 total is only ever used as an optimistic-concurrency check.
 
@@ -207,7 +207,7 @@ total is only ever used as an optimistic-concurrency check.
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm test` | Vitest — 145 tests across calc, money, validation, the AI parsers, invoices, clients, settings, auth |
+| `npm test` | Vitest - 145 tests across calc, money, validation, the AI parsers, invoices, clients, settings, auth |
 
 The test suite runs against a throwaway PGlite database, so it needs no
 services. Integration coverage includes double-pay idempotency, stale-total
@@ -219,10 +219,10 @@ derivation.
 ## Architecture
 
 ```
-src/app/(app)/       authenticated screens — dashboard, clients, invoices, settings
+src/app/(app)/       authenticated screens - dashboard, clients, invoices, settings
 src/app/(auth)/      login, signup
-src/app/i/[token]/   the public invoice — no session, no sidebar, no sign-up wall
-src/app/api/         27 route handlers — every mutation, plus the two AI endpoints and the dashboard brief
+src/app/i/[token]/   the public invoice - no session, no sidebar, no sign-up wall
+src/app/api/         27 route handlers - every mutation, plus the two AI endpoints and the dashboard brief
 src/components/      ui primitives, plus feature folders (invoices, clients, dashboard, public)
 src/lib/repositories one module per aggregate; every query takes a userId
 src/lib/validation/  zod schemas shared by client forms and server handlers
@@ -240,7 +240,7 @@ being written twice.
 
 `src/middleware.ts` runs on the Edge and does one cheap thing: bounce visitors
 with no session cookie away from protected paths. It is explicitly *not* the
-authority — every protected page still calls `requireUserPage()`, which hits the
+authority - every protected page still calls `requireUserPage()`, which hits the
 sessions table. Because the Edge runtime cannot load `node:crypto` or the
 Postgres driver, the cookie name lives in its own zero-import module
 (`src/lib/auth/cookie.ts`).
@@ -257,8 +257,8 @@ copy-pasteable version**; the outline is:
    connection string (the pooler resolves over IPv4; the direct
    `db.<ref>.supabase.co` host does not, which Vercel's build network needs).
 3. Set the environment variables on Vercel: `DATABASE_URL`, `SESSION_SECRET`,
-   and — for real email — `SMTP_USER` / `SMTP_PASSWORD` (or `RESEND_API_KEY`)
-   plus `EMAIL_FROM`. `NEXT_PUBLIC_APP_URL` is optional on Vercel — `appUrl()`
+   and - for real email - `SMTP_USER` / `SMTP_PASSWORD` (or `RESEND_API_KEY`)
+   plus `EMAIL_FROM`. `NEXT_PUBLIC_APP_URL` is optional on Vercel - `appUrl()`
    falls back to `VERCEL_PROJECT_PRODUCTION_URL` so share links resolve to the
    deployed origin either way.
 4. Run the migrations and seed once against the hosted database:
@@ -282,7 +282,7 @@ between origins does not invalidate a link.
 - Share tokens are 24 random bytes, compared in constant time, and revocable.
   `/i/*` and `/api/public/*` send `X-Robots-Tag: noindex, nofollow, noarchive,
   nosnippet` and `Cache-Control: no-store`, so a bearer link is never indexed or
-  cached. A dead, revoked, or draft link all render the same 404 — the wording
+  cached. A dead, revoked, or draft link all render the same 404 - the wording
   never reveals which, so live tokens cannot be probed.
 - Auth, public, email and upload endpoints are rate-limited per IP.
 - Logo uploads are validated on MIME type (PNG / JPEG / WebP / SVG) and size
@@ -293,7 +293,7 @@ between origins does not invalidate a link.
 ## Payments
 
 Paying on the public page does not contact a payment processor and collects no
-card details — it records a payment with a reference, marks the invoice paid and
+card details - it records a payment with a reference, marks the invoice paid and
 issues a receipt. The page says so in plain words, so nobody is left thinking
 money has moved. Swapping in Stripe or Razorpay means replacing one repository
 call: the row locking, the payment ledger and the idempotency key that makes a

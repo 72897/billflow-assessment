@@ -28,7 +28,7 @@ export interface UserMenuProps {
 
 /**
  * Signing out goes through the API rather than a link, because the cookie has to
- * be cleared *and* the session row deleted — a GET that mutates state would also
+ * be cleared *and* the session row deleted - a GET that mutates state would also
  * be prefetchable, which would sign people out by hovering.
  */
 function UserMenu({ user, businessName, align = 'end', side = 'bottom', compact = false }: UserMenuProps) {

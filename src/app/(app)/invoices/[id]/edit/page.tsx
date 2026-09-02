@@ -15,12 +15,12 @@ import { findInvoiceDetail } from '@/lib/repositories/invoices'
 export const metadata = { title: 'Edit invoice' }
 
 /**
- * Screen 10 — editing an existing invoice.
+ * Screen 10 - editing an existing invoice.
  *
  * A paid invoice is refused here rather than at save time: a form you are allowed
  * to fill in and then not allowed to submit is a worse experience than being told
  * up front, and duplicating is what you actually wanted. A *sent* invoice does
- * open, because a wrong figure on an unpaid invoice has to be fixable — the form
+ * open, because a wrong figure on an unpaid invoice has to be fixable - the form
  * confirms once before it writes.
  */
 export default async function EditInvoicePage({ params }: { params: Promise<{ id: string }> }) {

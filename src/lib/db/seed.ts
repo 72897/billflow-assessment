@@ -2,7 +2,7 @@
  * Builds the demo dataset.
  *
  * Everything is written through explicit SQL rather than the repositories,
- * because the repositories quite rightly stamp `now()` on every timestamp — and a
+ * because the repositories quite rightly stamp `now()` on every timestamp - and a
  * convincing demo needs seven months of history, an invoice that went overdue two
  * weeks ago and a payment that landed this morning. The arithmetic still goes
  * through `calculateInvoice()`, so no total here was typed by hand.
@@ -47,7 +47,7 @@ export interface SeedReport {
 
 const pad = (value: number) => String(value).padStart(2, '0')
 
-/** Local midnight `offset` days from today — a calendar date, not an instant. */
+/** Local midnight `offset` days from today - a calendar date, not an instant. */
 function dayStart(offset: number): Date {
   const date = new Date()
   date.setHours(0, 0, 0, 0)
@@ -205,7 +205,7 @@ async function insertInvoice(
   const reminderSentAt = reminders > 0 ? at(past(invoice.remindedAt ?? -5), 11, 0) : null
 
   // Sending an invoice mints a share link, so every invoice that has left the
-  // building has one — `share` only marks the two the demo script points at.
+  // building has one - `share` only marks the two the demo script points at.
   const publicToken = invoice.status === 'draft' ? null : token()
 
   const { rows } = await tx.query<{ id: string }>(

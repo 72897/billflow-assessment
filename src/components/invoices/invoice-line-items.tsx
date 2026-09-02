@@ -22,14 +22,14 @@ const GRID = 'sm:grid-cols-[minmax(0,1fr)_84px_128px_104px_32px]'
 const MOBILE_LABEL = 'mb-1 block text-2xs font-semibold uppercase tracking-wide text-muted-foreground sm:hidden'
 
 /**
- * Line items — unlimited rows, each priced as you type.
+ * Line items - unlimited rows, each priced as you type.
  *
  * Quantity and rate stay text inputs rather than `type="number"`: a number input
  * loses its value on a stray scroll, rejects a pasted "1,200", and its spinners
  * are useless at these magnitudes. The schema parses the string exactly, so
  * "1,200.50" and "1200.5" both mean the same thing.
  *
- * On a phone each row becomes a card — description, then qty and rate side by
+ * On a phone each row becomes a card - description, then qty and rate side by
  * side, then the amount and the remove control. A five-column table does not
  * survive a 375px viewport, and squeezing it into one produces inputs too narrow
  * to read what you typed.

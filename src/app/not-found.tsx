@@ -6,7 +6,7 @@ export const metadata = { title: 'Page not found' }
 
 /**
  * Also the destination for `notFound()` thrown by an invoice or client page whose
- * id belongs to somebody else — an "does not exist" answer and a "not yours"
+ * id belongs to somebody else - an "does not exist" answer and a "not yours"
  * answer must be indistinguishable, or the 404 becomes an existence oracle.
  */
 export default function NotFound() {

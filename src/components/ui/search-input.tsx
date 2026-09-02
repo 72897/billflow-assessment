@@ -20,7 +20,7 @@ const DEBOUNCE_MS = 300
 /**
  * A search box that lives in the URL.
  *
- * Filtering happens on the server, so the term has to reach it — and putting it
+ * Filtering happens on the server, so the term has to reach it - and putting it
  * in the query string rather than component state means a search is shareable,
  * survives a refresh, and comes back if the user hits Back. It is also what
  * keeps the term in the box on a no-results screen (CL-04): the input reads its
@@ -28,7 +28,7 @@ const DEBOUNCE_MS = 300
  *
  * Typing is debounced and pushed with `replace`, so a five-letter search leaves
  * one history entry instead of five, and `useTransition` keeps the old rows on
- * screen — dimmed with a spinner — while the server re-queries.
+ * screen - dimmed with a spinner - while the server re-queries.
  */
 function SearchInput({ param = 'q', placeholder = 'Search', label = 'Search', className }: SearchInputProps) {
   const router = useRouter()
@@ -40,7 +40,7 @@ function SearchInput({ param = 'q', placeholder = 'Search', label = 'Search', cl
   const [pending, startTransition] = useTransition()
 
   // The last value this component put into the URL. Anything else arriving in
-  // `urlValue` came from outside — a cleared filter chip, the back button — and
+  // `urlValue` came from outside - a cleared filter chip, the back button - and
   // the box should follow it rather than fight it.
   const pushed = useRef(urlValue)
 

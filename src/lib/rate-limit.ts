@@ -8,7 +8,7 @@ import { RateLimitError } from '@/lib/errors'
  * accidental abuse this product actually sees (a double-clicked Pay button, a
  * script hammering /login). It is per-instance, so a horizontally scaled
  * deployment should put a shared store (Redis / Upstash) behind the same
- * interface — the call sites would not change.
+ * interface - the call sites would not change.
  */
 
 interface Bucket {

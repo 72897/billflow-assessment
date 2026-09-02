@@ -9,12 +9,12 @@ import { getSettings, peekInvoiceNumber } from '@/lib/repositories/settings'
 export const metadata = { title: 'Settings' }
 
 /**
- * Screen 13 — settings.
+ * Screen 13 - settings.
  *
  * Three cards, in the order they matter: who you are on paper, the logo that sits
  * above it, and the numbering and defaults every new invoice inherits. The logo
  * saves on upload while the rest saves on submit, which is why it is a card of its
- * own rather than a field in the form — a file picker that silently waits for a
+ * own rather than a field in the form - a file picker that silently waits for a
  * Save button is a file picker people think is broken.
  */
 export default async function SettingsPage() {
@@ -25,7 +25,7 @@ export default async function SettingsPage() {
     <>
       <PageHeader
         title="Settings"
-        description="Your business details, branding and invoice defaults — everything an invoice inherits when you create it."
+        description="Your business details, branding and invoice defaults - everything an invoice inherits when you create it."
       />
 
       <div className="grid gap-4">

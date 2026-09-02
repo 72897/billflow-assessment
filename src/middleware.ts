@@ -7,7 +7,7 @@ import { SESSION_COOKIE } from '@/lib/auth/cookie'
  * Middleware runs before the page and has no database, so all it can see is
  * whether a session cookie exists. That is enough to bounce an anonymous
  * visitor straight to /login instead of rendering a shell and redirecting a
- * moment later — but a forged or expired cookie gets past it, which is fine:
+ * moment later - but a forged or expired cookie gets past it, which is fine:
  * every protected page still calls `requireUserPage()`, and that hits the
  * sessions table. Treating this as security rather than as a shortcut is the
  * mistake to avoid.
@@ -39,7 +39,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   /**
-   * Everything except API routes, static assets and the public invoice pages —
+   * Everything except API routes, static assets and the public invoice pages -
    * `/i/<token>` is deliberately reachable with no cookie at all.
    */
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icon.svg|i/).*)'],

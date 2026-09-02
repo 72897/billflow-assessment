@@ -4,8 +4,8 @@ import { createInvoice, listInvoices } from '@/lib/repositories/invoices'
 import { createInvoiceSchema, invoiceListQuerySchema } from '@/lib/validation/invoice'
 
 /**
- * The invoice list. Every filter — text search, status, client, date range, sort,
- * page — is applied in one SQL statement, because an account with two thousand
+ * The invoice list. Every filter - text search, status, client, date range, sort,
+ * page - is applied in one SQL statement, because an account with two thousand
  * invoices should not ship two thousand rows to the browser to display ten.
  */
 export const GET = route(async (request) => {

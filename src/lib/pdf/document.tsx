@@ -291,7 +291,7 @@ function PaymentBox({ data }: { data: InvoicePdfData }) {
 
   return (
     <View style={styles.paidBox}>
-      <Text style={styles.paidTitle}>Paid in full — thank you</Text>
+      <Text style={styles.paidTitle}>Paid in full - thank you</Text>
       <Text style={styles.paidLine}>
         {formatMoney(data.payment.amount, data.currency)} received on {formatDate(data.payment.paidAt, 'long')} by{' '}
         {method}
@@ -361,14 +361,14 @@ const receiptStyles = StyleSheet.create({
 /** A payment receipt: the same letterhead, but the amount is the headline. */
 export function ReceiptPdf({ data }: { data: InvoicePdfData }) {
   const payment = data.payment
-  const method = payment ? (METHOD_LABEL[payment.method] ?? payment.method) : '—'
+  const method = payment ? (METHOD_LABEL[payment.method] ?? payment.method) : '-'
 
   const rows: Array<[string, string]> = [
     ['Receipt for invoice', data.invoiceNumber],
     ['Paid by', data.client.company || data.client.name],
     ['Payment method', payment?.cardLast4 ? `${method} ending ${payment.cardLast4}` : method],
-    ['Reference', payment?.reference ?? '—'],
-    ['Payment date', payment ? formatDate(payment.paidAt, 'long') : '—'],
+    ['Reference', payment?.reference ?? '-'],
+    ['Payment date', payment ? formatDate(payment.paidAt, 'long') : '-'],
     ['Invoice issued', formatDate(data.issueDate, 'long')],
   ]
 

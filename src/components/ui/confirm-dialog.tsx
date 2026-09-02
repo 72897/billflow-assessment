@@ -20,7 +20,7 @@ export interface ConfirmDialogProps {
   onOpenChange: (open: boolean) => void
   title: string
   description?: React.ReactNode
-  /** Extra detail — what will be kept, what will be lost. */
+  /** Extra detail - what will be kept, what will be lost. */
   children?: React.ReactNode
   confirmLabel?: string
   cancelLabel?: string
@@ -33,7 +33,7 @@ export interface ConfirmDialogProps {
  * The dialog behind every destructive action.
  *
  * Failure is reported inside the dialog rather than as a toast after it closes,
- * because "delete" that quietly did not delete is the worst outcome here — the
+ * because "delete" that quietly did not delete is the worst outcome here - the
  * dialog stays open with the reason until the user acknowledges it.
  */
 function ConfirmDialog({

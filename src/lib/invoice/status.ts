@@ -40,7 +40,7 @@ export interface StatusSource {
  * what "today" means: `invoice_display_status()` compares `due_date` against
  * `current_date`, and every Postgres this deploys to runs in UTC. Deriving the
  * TypeScript side from local time instead makes the two disagree for as many
- * hours as the server is offset from UTC — an invoice that SQL calls overdue,
+ * hours as the server is offset from UTC - an invoice that SQL calls overdue,
  * with a "due in 0 days" caption rendered beside it.
  */
 export function todayIsoDate(now: Date = new Date()): string {

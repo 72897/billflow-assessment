@@ -8,7 +8,7 @@ import { getSettings } from '@/lib/repositories/settings'
  *
  * The session is resolved here rather than in each page, so a signed-out visitor
  * cannot reach any screen in this group even if the middleware cookie check is
- * bypassed — `requireUserPage()` queries the sessions table and redirects.
+ * bypassed - `requireUserPage()` queries the sessions table and redirects.
  *
  * `pb-24 lg:pb-8` leaves room for the fixed phone tab bar; without it the last
  * row of a list sits underneath it and looks cut off.

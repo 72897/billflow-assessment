@@ -2,14 +2,14 @@
  * The dashboard, explained.
  *
  * The cards already show the numbers; this says what they mean and what to do
- * next. Three short paragraphs — money in, money owed — and a to-do list ranked
+ * next. Three short paragraphs - money in, money owed - and a to-do list ranked
  * by what it is worth chasing.
  *
  * Two rules make it trustworthy. Every figure is computed by Postgres and
  * formatted here, so the model narrates arithmetic it never performed: it is
  * given "INR 1,84,500 collected this month" and asked to explain it, not asked
  * to add anything up. And each recommendation carries a `target` from a closed
- * list, which this module turns into a link — the model never writes a URL.
+ * list, which this module turns into a link - the model never writes a URL.
  *
  * With no key, or on any failure, `briefFromRules` answers instead. It is not a
  * stub: it says the same things in the same shape, just in sentences written
@@ -258,7 +258,7 @@ export function briefFromRules(context: BriefContext): DashboardBrief {
           ? `${money(stats.outstanding)} out with clients, none of it late`
           : stats.draftCount > 0
             ? `${pluralise(stats.draftCount, 'draft')} waiting to be sent`
-            : 'Nothing outstanding — you are all paid up'
+            : 'Nothing outstanding - you are all paid up'
 
   const thisMonth =
     stats.earnedThisMonth > 0
@@ -285,7 +285,7 @@ export function briefFromRules(context: BriefContext): DashboardBrief {
         biggest.invoiceNumber === oldest.invoiceNumber
           ? `${pluralise(biggest.daysOverdue, 'day')} late`
           : `${pluralise(oldest.daysOverdue, 'day')} being the longest wait`
-      receivables = `${out} ${money(stats.overdue)} of it is past due — the largest is ${named}, with ${late}.`
+      receivables = `${out} ${money(stats.overdue)} of it is past due - the largest is ${named}, with ${late}.`
     } else {
       receivables = `${out} None of it is late yet.`
     }
@@ -379,9 +379,9 @@ function briefFromModel(raw: unknown): DashboardBrief | null {
  * The brief, model first.
  *
  * Every failure lands on the rules: no key, a rejected key, a refusal, a
- * timeout. Unlike the invoice composer — where a transient error must surface,
+ * timeout. Unlike the invoice composer - where a transient error must surface,
  * because the user asked for their own words to be read and quietly answering
- * with something else would be wrong — nobody asked for these sentences in
+ * with something else would be wrong - nobody asked for these sentences in
  * particular. They asked what the numbers mean, and the deterministic answer
  * means the same thing. So this never throws.
  */

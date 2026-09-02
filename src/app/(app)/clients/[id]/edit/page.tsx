@@ -8,7 +8,7 @@ import { findClient } from '@/lib/repositories/clients'
 export const metadata = { title: 'Edit client' }
 
 /**
- * Screen 7's edit view — the same `ClientForm`, prefilled.
+ * Screen 7's edit view - the same `ClientForm`, prefilled.
  *
  * Delete lives here rather than only in the row menu, because this is where
  * someone ends up when they open a client intending to change or remove it. It

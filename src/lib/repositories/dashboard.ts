@@ -1,9 +1,9 @@
 /**
  * Dashboard aggregates.
  *
- * Every number is computed by PostgreSQL — `sum(... ) FILTER (WHERE ...)` in one
+ * Every number is computed by PostgreSQL - `sum(... ) FILTER (WHERE ...)` in one
  * pass for the stat cards, `generate_series` LEFT JOINed against paid invoices
- * for the chart — so the browser receives a handful of totals instead of the
+ * for the chart - so the browser receives a handful of totals instead of the
  * whole invoice table.
  *
  * "Overdue" is a subset of "outstanding": an overdue invoice is still money the
@@ -186,7 +186,7 @@ export async function getIncomeSeries(
 const ATTENTION_WINDOW_DAYS = 7
 
 /**
- * Overdue invoices first, then anything falling due this week — the short list
+ * Overdue invoices first, then anything falling due this week - the short list
  * the user can actually act on, each row carrying what the Remind button needs.
  */
 export async function getNeedsAttention(userId: string, limit = 5): Promise<NeedsAttentionItem[]> {

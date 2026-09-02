@@ -36,11 +36,11 @@ const METHODS: Array<{ value: Method; title: string; description: string; icon: 
 ]
 
 /**
- * "Mark as paid" — money that arrived outside the app.
+ * "Mark as paid" - money that arrived outside the app.
  *
  * The whole invoice is settled in one go: BillFlow records payments, not part
  * payments, so there is no amount to type and therefore no way to disagree with
- * the total. That is a deliberate limit rather than an omission — a partial
+ * the total. That is a deliberate limit rather than an omission - a partial
  * payment would need its own history, balance and receipt, and none of that is
  * worth carrying for a freelancer's first invoice.
  *
@@ -71,7 +71,7 @@ function RecordPaymentDialog({ open, onOpenChange, invoice }: RecordPaymentDialo
       )
       toast.success(data.alreadyPaid ? `${invoice.invoiceNumber} was already paid` : `${invoice.invoiceNumber} is paid`, {
         description: data.alreadyPaid
-          ? 'Nothing changed — the payment on record stands.'
+          ? 'Nothing changed - the payment on record stands.'
           : `${formatMoney(invoice.total, invoice.currency)} recorded. A receipt is ready to download.`,
       })
       setNote('')
@@ -113,7 +113,7 @@ function RecordPaymentDialog({ open, onOpenChange, invoice }: RecordPaymentDialo
             </RadioGroup>
           </div>
 
-          <Field label="Note" optional hint="Only you see this — a transaction reference, say.">
+          <Field label="Note" optional hint="Only you see this - a transaction reference, say.">
             <FieldTextarea
               rows={2}
               value={note}

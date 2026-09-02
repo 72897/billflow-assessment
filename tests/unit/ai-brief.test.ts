@@ -1,8 +1,8 @@
 /**
  * The dashboard brief's deterministic half.
  *
- * `briefFromRules` is not a placeholder — it is what a deployment with no API key
- * reads, and what covers for the model on a timeout — so it gets the same
+ * `briefFromRules` is not a placeholder - it is what a deployment with no API key
+ * reads, and what covers for the model on a timeout - so it gets the same
  * scrutiny the model path would if it could be tested offline.
  *
  * Two invariants matter here. The sentences must never claim a number the figures
@@ -55,7 +55,7 @@ function context(overrides: Partial<BriefContext> = {}): BriefContext {
   return { currency: 'INR', today: '2026-09-03', stats: STATS, attention: [invoice()], ...overrides }
 }
 
-describe('briefFromRules — the narrative', () => {
+describe('briefFromRules - the narrative', () => {
   it('leads with the overdue money when there is any', () => {
     const brief = briefFromRules(context())
 
@@ -112,12 +112,12 @@ describe('briefFromRules — the narrative', () => {
       }),
     )
 
-    expect(brief.headline).toBe('Nothing outstanding — you are all paid up')
+    expect(brief.headline).toBe('Nothing outstanding - you are all paid up')
     expect(brief.receivables).toBe('Nothing is outstanding: every invoice you have sent has been paid.')
   })
 })
 
-describe('briefFromRules — the recommendations', () => {
+describe('briefFromRules - the recommendations', () => {
   it('puts chasing late money first, and only ever links where the app can go', () => {
     const brief = briefFromRules(context())
 

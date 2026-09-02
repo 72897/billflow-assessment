@@ -1,5 +1,5 @@
 -- ============================================================================
--- BillFlow — 0003_optional_rls.sql
+-- BillFlow - 0003_optional_rls.sql
 --
 -- OPTIONAL, OFF BY DEFAULT.
 --

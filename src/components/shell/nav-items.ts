@@ -24,7 +24,7 @@ export const NAV_ITEMS: NavItem[] = [
 /**
  * Whether a nav item owns the current path.
  *
- * `/invoices/new` has to light up "Invoices", so this matches the prefix — but
+ * `/invoices/new` has to light up "Invoices", so this matches the prefix - but
  * only at a segment boundary, or `/invoices` would also claim a future
  * `/invoices-archive`.
  */

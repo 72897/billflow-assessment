@@ -2,7 +2,7 @@ import { cn, avatarTint, initials } from '@/lib/utils'
 
 export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
   name: string | null | undefined
-  /** Overrides the deterministic tint — used for the signed-in user. */
+  /** Overrides the deterministic tint - used for the signed-in user. */
   tone?: 'auto' | 'primary'
   size?: 'sm' | 'md' | 'lg'
   src?: string | null

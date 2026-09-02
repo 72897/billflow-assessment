@@ -5,7 +5,7 @@ import { requireUserPage } from '@/lib/auth'
 export const metadata = { title: 'Add client' }
 
 /**
- * Screen 6 — add a client.
+ * Screen 6 - add a client.
  *
  * `?returnTo=` lets the invoice editor send someone here to add the client they
  * are missing and get them back to the invoice afterwards. It is validated as a

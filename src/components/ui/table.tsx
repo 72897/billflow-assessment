@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
  * A table that survives a phone.
  *
  * The wrapper scrolls horizontally rather than letting the layout squash, and
- * every list screen also renders a card list below `sm:` — the table is for
+ * every list screen also renders a card list below `sm:` - the table is for
  * tablets upwards. Header cells stay put while the body scrolls.
  */
 const TableWrap = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
@@ -33,7 +33,7 @@ const TableBody = forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLT
 TableBody.displayName = 'TableBody'
 
 /**
- * `group` on an interactive row lets a cell react to a hover anywhere in it —
+ * `group` on an interactive row lets a cell react to a hover anywhere in it -
  * the chevron that fades in at the end of an invoice row, for instance. The
  * `focus-within` state matters as much as the hover: tabbing through a list
  * should highlight the row you have landed in, not just outline one link.

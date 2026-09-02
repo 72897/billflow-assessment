@@ -47,7 +47,7 @@ interface SendResult {
  * on screen, and the link the email would have carried is offered as a copy
  * button so the send can be completed by hand.
  *
- * Subject and body are pre-filled but editable — the template already contains
+ * Subject and body are pre-filled but editable - the template already contains
  * the number, amount, due date and pay link, so sending it untouched is a
  * complete email.
  */
@@ -88,10 +88,10 @@ function SendInvoiceDialog({ open, onOpenChange, invoice }: SendInvoiceDialogPro
 
       toast.success(data.firstSend ? `${invoice.invoiceNumber} sent` : `${invoice.invoiceNumber} sent again`, {
         // The outbox transport is not a failure, but pretending an email left
-        // when it did not would be — so say where it went, and why, instead.
+        // when it did not would be - so say where it went, and why, instead.
         description:
           data.delivery.transport === 'outbox'
-            ? `${data.delivery.note ?? 'No email provider is configured'} — the invoice is sent and its payment link is live, so copy the link to the client yourself.`
+            ? `${data.delivery.note ?? 'No email provider is configured'} - the invoice is sent and its payment link is live, so copy the link to the client yourself.`
             : `${to} should have it in a moment.`,
         duration: data.delivery.transport === 'outbox' ? 12_000 : undefined,
       })

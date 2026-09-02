@@ -51,8 +51,8 @@ export function constantTimeEquals(a: string, b: string): boolean {
 // Lifecycle
 //
 // The database half of a session (issue / resolve / revoke) is kept separate
-// from the cookie half, so the rules that matter — only the digest is stored, an
-// expired row is refused and cleaned up — can be exercised without a request.
+// from the cookie half, so the rules that matter - only the digest is stored, an
+// expired row is refused and cleaned up - can be exercised without a request.
 // ---------------------------------------------------------------------------
 
 export interface IssuedSession {

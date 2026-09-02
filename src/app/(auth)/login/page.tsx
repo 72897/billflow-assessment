@@ -7,7 +7,7 @@ export const metadata = {
 
 /**
  * `redirectTo` arrives from the middleware, which means it arrives from the URL
- * — so it is checked here as well as in the login schema. A path that does not
+ * - so it is checked here as well as in the login schema. A path that does not
  * start with a single `/` is dropped rather than followed: an attacker who can
  * choose the post-login destination has an open redirect.
  */

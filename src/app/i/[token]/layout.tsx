@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { APP_NAME } from '@/lib/config'
 
 /**
- * The frame around a shared invoice — Screen 17's shell.
+ * The frame around a shared invoice - Screen 17's shell.
  *
  * Deliberately not the app shell: whoever opens this link has no account, so a
  * sidebar full of dashboards they cannot reach would only be confusing. What is
@@ -33,7 +33,7 @@ export default function PublicInvoiceLayout({ children }: { children: React.Reac
         <Link href="/" className="font-medium text-foreground underline-offset-2 hover:underline">
           {APP_NAME}
         </Link>{' '}
-        — invoicing that gets you paid.
+        - invoicing that gets you paid.
       </footer>
     </div>
   )

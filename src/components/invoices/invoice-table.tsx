@@ -16,7 +16,7 @@ export interface InvoiceTableProps {
   showDueDate?: boolean
   /**
    * Turns the column headers into sort controls. Only the invoice list can
-   * honour them — the dashboard and the client page show a fixed slice, and a
+   * honour them - the dashboard and the client page show a fixed slice, and a
    * header that rewrote `?sort=` there would sort a list the user cannot see the
    * rest of.
    */
@@ -28,7 +28,7 @@ export interface InvoiceTableProps {
  * One list of invoices, two layouts.
  *
  * A five-column table is unusable at 375px, so below `sm:` the same rows render
- * as cards. Both are driven from the same array — there is no second query and no
+ * as cards. Both are driven from the same array - there is no second query and no
  * chance of the two disagreeing.
  *
  * The whole row is a link rather than just the invoice number: a 44px-tall tap

@@ -9,7 +9,7 @@ import { ErrorState } from '@/components/ui/error-state'
  *
  * So the copy does two things the in-app error page does not need to: it says the
  * invoice itself is fine (nothing they owe has changed), and it tells them what to
- * do if it keeps failing — reply to the person who sent the link. `reset()` re-runs
+ * do if it keeps failing - reply to the person who sent the link. `reset()` re-runs
  * the server component, which is usually all a transient database blip needs.
  */
 export default function PublicInvoiceError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
@@ -21,7 +21,7 @@ export default function PublicInvoiceError({ error, reset }: { error: Error & { 
     <Card>
       <ErrorState
         title="This invoice did not load"
-        description="Something went wrong on our side — the invoice itself is unaffected. Try again, and if it keeps failing, reply to the email this link came from."
+        description="Something went wrong on our side - the invoice itself is unaffected. Try again, and if it keeps failing, reply to the email this link came from."
         onRetry={reset}
       />
       {error.digest ? (

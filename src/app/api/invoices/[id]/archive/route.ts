@@ -8,7 +8,7 @@ import { isValidUuid } from '@/lib/utils'
  * Archive and un-archive.
  *
  * A paid invoice is a financial record, so "delete" archives it instead of
- * removing the row — the money stays in the books and the totals stay honest.
+ * removing the row - the money stays in the books and the totals stay honest.
  * This endpoint is the deliberate version of that, plus the undo (INV-13).
  */
 async function invoiceId(context: RouteContext<{ id: string }>): Promise<string> {

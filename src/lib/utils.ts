@@ -7,10 +7,10 @@ export function cn(...inputs: ClassValue[]) {
 
 /** `2026-09-16` -> `16 Sep 2026`. Renders the calendar date, never shifted by timezone. */
 export function formatDate(iso: string | null | undefined, style: 'short' | 'long' | 'numeric' = 'short'): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const datePart = iso.slice(0, 10)
   const [year, month, day] = datePart.split('-').map(Number)
-  if (!year || !month || !day) return '—'
+  if (!year || !month || !day) return '-'
   const date = new Date(Date.UTC(year, month - 1, day))
   const options: Intl.DateTimeFormatOptions =
     style === 'long'
@@ -23,9 +23,9 @@ export function formatDate(iso: string | null | undefined, style: 'short' | 'lon
 
 /** `2026-09-02T10:24:00Z` -> `02 Sep 2026, 10:24 AM` in the viewer's timezone. */
 export function formatDateTime(iso: string | null | undefined): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return '—'
+  if (Number.isNaN(date.getTime())) return '-'
   return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -39,17 +39,17 @@ export function formatDateTime(iso: string | null | undefined): string {
 }
 
 export function formatTime(iso: string | null | undefined): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return '—'
+  if (Number.isNaN(date.getTime())) return '-'
   return new Intl.DateTimeFormat('en-GB', { hour: 'numeric', minute: '2-digit', hour12: true }).format(date)
 }
 
 /** "3 minutes ago", "yesterday", "2 Sep". */
 export function formatRelative(iso: string | null | undefined): string {
-  if (!iso) return '—'
+  if (!iso) return '-'
   const then = new Date(iso).getTime()
-  if (Number.isNaN(then)) return '—'
+  if (Number.isNaN(then)) return '-'
   const seconds = Math.round((Date.now() - then) / 1000)
   if (seconds < 45) return 'just now'
   const minutes = Math.round(seconds / 60)
@@ -91,7 +91,7 @@ export function initials(name: string | null | undefined, fallback = '?'): strin
  *
  * Six hues, but one recipe: every tint is the same low saturation and the same
  * lightness, so a list of clients reads as one muted family rather than a bag of
- * highlighter pens. Only the hue rotates — which is enough to tell two clients
+ * highlighter pens. Only the hue rotates - which is enough to tell two clients
  * apart at a glance without any of them shouting.
  */
 const AVATAR_TINTS = [

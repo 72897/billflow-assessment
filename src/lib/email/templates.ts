@@ -99,7 +99,7 @@ export function invoiceEmail({ invoice, shareUrl, message, reminder = false }: I
 
   const heading = reminder
     ? overdue
-      ? `Payment overdue — invoice ${escapeHtml(invoice.invoiceNumber)}`
+      ? `Payment overdue - invoice ${escapeHtml(invoice.invoiceNumber)}`
       : `A reminder about invoice ${escapeHtml(invoice.invoiceNumber)}`
     : `Invoice ${escapeHtml(invoice.invoiceNumber)} from ${escapeHtml(business)}`
 
@@ -122,7 +122,7 @@ export function invoiceEmail({ invoice, shareUrl, message, reminder = false }: I
     body,
     ctaLabel: 'View and pay invoice',
     ctaUrl: shareUrl,
-    footer: `This link opens the invoice — no account or password needed. Questions? Reply to this email to reach ${escapeHtml(
+    footer: `This link opens the invoice - no account or password needed. Questions? Reply to this email to reach ${escapeHtml(
       invoice.business.businessEmail || business,
     )}.`,
   })
@@ -139,7 +139,7 @@ export function invoiceEmail({ invoice, shareUrl, message, reminder = false }: I
     '',
     `View and pay: ${shareUrl}`,
     '',
-    `— ${business}`,
+    `- ${business}`,
   ]
     .filter((line, index, all) => !(line === '' && all[index - 1] === ''))
     .join('\n')
@@ -161,7 +161,7 @@ export interface ReceiptEmailInput {
 /** Sent to the payer the moment a simulated payment succeeds. */
 export function receiptEmail(input: ReceiptEmailInput): { html: string; text: string } {
   const amount = formatMoney(input.amount, input.currency)
-  const heading = `Payment received — ${escapeHtml(input.invoiceNumber)}`
+  const heading = `Payment received - ${escapeHtml(input.invoiceNumber)}`
   const intro = `Thank you, ${escapeHtml(input.clientName || 'there')}. ${escapeHtml(
     input.businessName || APP_NAME,
   )} has marked this invoice as paid.`
@@ -181,7 +181,7 @@ export function receiptEmail(input: ReceiptEmailInput): { html: string; text: st
   })
 
   const text = [
-    `Payment received — ${input.invoiceNumber}`,
+    `Payment received - ${input.invoiceNumber}`,
     '',
     `Amount paid: ${amount}`,
     `Reference: ${input.reference}`,
@@ -189,7 +189,7 @@ export function receiptEmail(input: ReceiptEmailInput): { html: string; text: st
     '',
     `Receipt: ${input.shareUrl}?receipt=1`,
     '',
-    `— ${input.businessName || APP_NAME}`,
+    `- ${input.businessName || APP_NAME}`,
   ].join('\n')
 
   return { html, text }

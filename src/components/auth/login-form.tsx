@@ -59,7 +59,7 @@ function LoginForm({ redirectTo, demo = false }: LoginFormProps) {
       <div className="mb-5 sm:mb-6">
         <h1 className="text-[22px] font-semibold tracking-[-0.02em] sm:text-2xl">Sign in to BillFlow</h1>
         <p className="mt-1 text-[13px] text-muted-foreground sm:text-sm">
-          Pick up where you left off — your invoices, clients and totals are waiting.
+          Pick up where you left off - your invoices, clients and totals are waiting.
         </p>
       </div>
 

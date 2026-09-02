@@ -3,7 +3,7 @@ import { requireUser } from '@/lib/auth'
 import { assertNotDuplicateEmail, createClient, listClients } from '@/lib/repositories/clients'
 import { clientListQuerySchema, clientSchema } from '@/lib/validation/client'
 
-/** Search, sort and pagination all happen in SQL — see `listClients`. */
+/** Search, sort and pagination all happen in SQL - see `listClients`. */
 export const GET = route(async (request) => {
   const user = await requireUser()
   const params = parseOrThrow(clientListQuerySchema, searchParamsToObject(request.url))

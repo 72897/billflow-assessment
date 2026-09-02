@@ -33,7 +33,7 @@ export function emailFrom(): string {
 
   /**
    * SMTP servers will not let you claim an address you have not authenticated as
-   * — Gmail silently rewrites the header, others reject the message outright. So
+   * - Gmail silently rewrites the header, others reject the message outright. So
    * when SMTP is the transport, the authenticated mailbox wins and `EMAIL_FROM`
    * contributes only the display name.
    */
@@ -57,7 +57,7 @@ export interface SmtpConfig {
 /**
  * SMTP settings, or null when they are not configured.
  *
- * Only the mailbox and its password are required — the host defaults to Gmail
+ * Only the mailbox and its password are required - the host defaults to Gmail
  * and the port follows from it, because that is the account most people have to
  * hand. Port 465 is implicit TLS; anything else (587) starts plaintext and
  * upgrades with STARTTLS, which is what `secure: false` means to nodemailer.

@@ -79,7 +79,7 @@ function ShareLinkCard({ invoice, shareUrl }: ShareLinkCardProps) {
         <CardDescription>
           {url
             ? 'Anyone with this link can view and pay this invoice. No account needed.'
-            : 'Share this invoice without emailing it — useful for WhatsApp or a chat thread.'}
+            : 'Share this invoice without emailing it - useful for WhatsApp or a chat thread.'}
         </CardDescription>
       </CardHeader>
 

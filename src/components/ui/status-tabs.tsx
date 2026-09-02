@@ -14,7 +14,7 @@ export interface StatusTabsProps {
   /** The query-string key these tabs own. */
   param?: string
   tabs: readonly StatusTab[]
-  /** The value that means "no filter" — removed from the URL rather than written. */
+  /** The value that means "no filter" - removed from the URL rather than written. */
   neutralValue?: string
   label?: string
   className?: string
@@ -24,7 +24,7 @@ export interface StatusTabsProps {
  * Status filter as a row of tabs with counts, rather than a dropdown.
  *
  * The five statuses are the primary way an invoice list gets narrowed, and a tab
- * strip shows all five at once with how many are in each — a dropdown hides both.
+ * strip shows all five at once with how many are in each - a dropdown hides both.
  * The counts come from the server under the same search and client filters as the
  * rows, so a tab reading "3" opens onto exactly three invoices.
  *

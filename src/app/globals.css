@@ -11,7 +11,7 @@
  *
  * The palette is deliberately small: one neutral ramp, one accent, and four
  * status hues that only ever appear on a badge, a dot or a number. Everything
- * structural — surfaces, borders, text — is the same near-neutral slate at low
+ * structural - surfaces, borders, text - is the same near-neutral slate at low
  * saturation, which is what stops a dense screen from looking like a toy.
  */
 @layer base {
@@ -46,7 +46,7 @@
     --input: 214 20% 88%;
     --ring: 240 68% 56%;
 
-    /* Status. Each is a text colour, a wash and a hairline — never a fill. */
+    /* Status. Each is a text colour, a wash and a hairline - never a fill. */
     --info: 213 82% 42%;
     --info-foreground: 0 0% 100%;
     --info-subtle: 213 100% 97%;
@@ -167,7 +167,7 @@
   }
 
   /**
-   * Screen content settles in rather than appearing. 200ms and 4px — enough to
+   * Screen content settles in rather than appearing. 200ms and 4px - enough to
    * read as a page arriving, short enough that a fast navigation never feels
    * like it is waiting for an animation.
    */
@@ -185,7 +185,7 @@
   /**
    * A surface that responds to the pointer: the border firms up, the shadow
    * deepens, and the whole card rises by a single pixel. One pixel is the point
-   * — anything more and a grid of cards starts bouncing.
+   * - anything more and a grid of cards starts bouncing.
    */
   .surface-interactive {
     @apply transition-[transform,box-shadow,border-color] duration-150 ease-out-quint;

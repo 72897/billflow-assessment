@@ -1,6 +1,6 @@
 'use client'
 
-import { Mic, RotateCcw, Sparkles, Square, TriangleAlert, Wand2 } from 'lucide-react'
+import { Mic, RotateCcw, Square, TriangleAlert } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
@@ -101,7 +101,7 @@ function AiComposer() {
 
     const warnings = [...draft.warnings]
     if (draft.clientMatch === 'partial' && draft.clientName) {
-      warnings.unshift(`Billed to ${draft.clientName} — change it above if that is the wrong client.`)
+      warnings.unshift(`Billed to ${draft.clientName} - change it above if that is the wrong client.`)
     }
     setResult({ summary: draft.summary, warnings, source: draft.source })
   }
@@ -195,14 +195,9 @@ function AiComposer() {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <div className="flex items-center gap-2">
-          <span className="flex size-6 items-center justify-center rounded-md bg-primary/10 text-primary [&_svg]:size-3.5">
-            <Sparkles />
-          </span>
-          <CardTitle>Describe the work</CardTitle>
-        </div>
+        <CardTitle>Describe the work</CardTitle>
         <CardDescription>
-          Write it the way you would in an email — or dictate it — and the client, line items, tax, discount and
+          Write it the way you would in an email - or dictate it - and the client, line items, tax, discount and
           due date below fill themselves in. Nothing is saved until you press Save.
         </CardDescription>
       </CardHeader>
@@ -225,7 +220,7 @@ function AiComposer() {
             aria-label="Describe the invoice in your own words"
             placeholder={
               recording
-                ? 'Listening — press Stop when you are done.'
+                ? 'Listening - press Stop when you are done.'
                 : 'Website redesign ₹25,000 and SEO setup ₹5,000, 10% discount, 18% GST, due in 14 days'
             }
             className="pr-16"
@@ -243,7 +238,6 @@ function AiComposer() {
             loading={drafting}
             loadingText="Reading it…"
           >
-            <Wand2 />
             Build the invoice
           </Button>
 
@@ -265,7 +259,7 @@ function AiComposer() {
           {recording ? (
             <span className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
               <span className="size-1.5 animate-pulse rounded-full bg-danger" aria-hidden />
-              Recording — a minute at most
+              Recording - a minute at most
             </span>
           ) : null}
 
@@ -310,7 +304,7 @@ function AiComposer() {
 
             <p className="text-2xs text-muted-foreground">
               {result.source === 'rules'
-                ? 'Read by the built-in parser — no AI key is configured on this deployment. Check the amounts below.'
+                ? 'Read by the built-in parser - no AI key is configured on this deployment. Check the amounts below.'
                 : 'Check the lines below, then Save.'}
             </p>
           </div>

@@ -15,13 +15,13 @@ import { sendInvoiceSchema } from '@/lib/validation/invoice'
  *
  * The order of operations is the point: the share link is minted and the message
  * is delivered *before* the invoice is marked sent. If the provider fails in a way
- * a retry could fix, the invoice stays a draft and the user is told — rather than
+ * a retry could fix, the invoice stays a draft and the user is told - rather than
  * seeing a "Sent" badge for an email that never left.
  *
  * A permanent rejection (a test-mode Resend account, an unverified sending
  * domain) is handled inside `sendEmail`, which captures the message to the outbox
  * and says so. The invoice is marked sent in that case, because the share link it
- * minted is live and payable — and `delivery.note` carries the reason to the UI so
+ * minted is live and payable - and `delivery.note` carries the reason to the UI so
  * nobody is told an email arrived when it did not.
  */
 export const POST = route(async (request, context: RouteContext<{ id: string }>) => {
@@ -61,7 +61,7 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     text,
     replyTo: invoice.business.businessEmail || undefined,
   }).catch((error: unknown) => {
-    // Only a retryable failure reaches here — `sendEmail` absorbs the permanent
+    // Only a retryable failure reaches here - `sendEmail` absorbs the permanent
     // ones. So the advice is "try again", and the state is left exactly as it
     // was found, which for a first send means still a draft.
     const unchanged =
@@ -69,7 +69,7 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
         ? 'Your invoice is still a draft'
         : `${invoice.invoiceNumber} is unchanged`
     throw new AppError(
-      `That email could not be sent. ${unchanged} — you can retry, or copy the link below and send it yourself.`,
+      `That email could not be sent. ${unchanged} - you can retry, or copy the link below and send it yourself.`,
       {
         status: 502,
         code: 'email_failed',

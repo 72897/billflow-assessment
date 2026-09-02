@@ -1,5 +1,5 @@
 /**
- * Invoice arithmetic — the one implementation used by both the browser (for
+ * Invoice arithmetic - the one implementation used by both the browser (for
  * instant feedback while typing) and the server (which recalculates every
  * amount from scratch before writing, so a tampered request cannot change a
  * total). Everything is integer arithmetic on minor units / thousandths /

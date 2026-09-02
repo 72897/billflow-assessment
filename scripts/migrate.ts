@@ -9,7 +9,7 @@ async function main() {
   const report = await runMigrations(db, (msg) => console.log(msg))
 
   if (report.applied.length === 0) {
-    console.log('  Nothing to do — database is already up to date.')
+    console.log('  Nothing to do - database is already up to date.')
   }
   console.log(
     `\nDone. ${report.applied.length} applied, ${report.skipped.length} already present.\n`,

@@ -2,7 +2,7 @@
  * The two session constants that the Edge runtime is allowed to know.
  *
  * This module exists purely so `middleware.ts` can name the cookie without
- * importing `session.ts` — that module reaches for `node:crypto` and the Postgres
+ * importing `session.ts` - that module reaches for `node:crypto` and the Postgres
  * pool, neither of which exists on the Edge, and a single `import` of a string
  * constant is enough to drag the whole graph in and fail the build.
  *

@@ -31,7 +31,7 @@ export function firstValues(raw: RawSearchParams): Record<string, string> {
 
 /**
  * Parses a page's `searchParams`, falling back to the schema's own defaults when
- * the URL cannot be made sense of — the user sees an unfiltered list rather than
+ * the URL cannot be made sense of - the user sees an unfiltered list rather than
  * an error page, which is the more useful answer to a broken link.
  */
 export function parseQuery<S extends z.ZodTypeAny>(schema: S, raw: RawSearchParams): z.infer<S> {

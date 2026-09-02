@@ -4,8 +4,8 @@
  * Two conventions hold everywhere:
  *   - every monetary field is an integer count of minor units (paise / cents),
  *     named `...Minor` where ambiguity is possible;
- *   - every date is an ISO string — `YYYY-MM-DD` for calendar dates and a full
- *     ISO-8601 instant for timestamps — never a `Date`, so payloads can cross
+ *   - every date is an ISO string - `YYYY-MM-DD` for calendar dates and a full
+ *     ISO-8601 instant for timestamps - never a `Date`, so payloads can cross
  *     the server/client boundary unchanged.
  */
 

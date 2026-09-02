@@ -3,9 +3,9 @@
  *
  * BillFlow talks to PostgreSQL through two interchangeable drivers:
  *
- *   - `pg`     — used whenever DATABASE_URL is set (production, and any local
+ *   - `pg`     - used whenever DATABASE_URL is set (production, and any local
  *                Postgres/Supabase/Neon instance).
- *   - `pglite` — PostgreSQL 16 compiled to WebAssembly, storing its data in
+ *   - `pglite` - PostgreSQL 16 compiled to WebAssembly, storing its data in
  *                ./.pgdata. Used when DATABASE_URL is empty so the project runs
  *                with zero setup. It is real Postgres, so the same migrations,
  *                constraints, plpgsql functions and transactions apply.
@@ -19,7 +19,7 @@ export interface QueryResult<T> {
   rowCount: number
 }
 
-/** Anything that can run a parameterised statement — pool, client or tx. */
+/** Anything that can run a parameterised statement - pool, client or tx. */
 export interface Queryable {
   query<T = Record<string, unknown>>(text: string, params?: readonly unknown[]): Promise<QueryResult<T>>
 }
@@ -63,7 +63,7 @@ function normaliseRows<T>(raw: { rows?: unknown[]; rowCount?: number | null; aff
  * string with `sslmode` removed.
  *
  * `pg` lets a connection string override the explicit `ssl` option, and its
- * `sslmode=require` handling verifies the certificate chain — which fails
+ * `sslmode=require` handling verifies the certificate chain - which fails
  * against Supabase, Neon and RDS, whose intermediate CAs are not in Node's
  * trust store. Managed providers hand out URLs with `sslmode=require` already
  * in them, so the flag is read here and taken out of the string rather than
@@ -227,7 +227,7 @@ async function build(): Promise<Database> {
 
   const dataDir = resolveDataDir()
   if (!process.env.BILLFLOW_QUIET_DB) {
-    console.log(`[db] DATABASE_URL not set — using embedded PGlite at ${dataDir}`)
+    console.log(`[db] DATABASE_URL not set - using embedded PGlite at ${dataDir}`)
   }
   return createPgliteDatabase(dataDir)
 }
@@ -236,7 +236,7 @@ async function build(): Promise<Database> {
 export function getDb(): Promise<Database> {
   if (!globalThis.__billflowDb) {
     globalThis.__billflowDb = build().catch((error) => {
-      // Do not cache a failed connection — the next request should retry.
+      // Do not cache a failed connection - the next request should retry.
       globalThis.__billflowDb = undefined
       throw error
     })

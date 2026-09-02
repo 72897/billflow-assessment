@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowRight, Loader2, Sparkles } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/card'
@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 export interface AiBriefProps {
   /**
    * The deterministic brief, rendered on the server. It is on screen before the
-   * first paint, so this card never shows a skeleton and never shows nothing —
+   * first paint, so this card never shows a skeleton and never shows nothing -
    * the model's version replaces it if and when it arrives.
    */
   initial: DashboardBrief
@@ -52,12 +52,6 @@ function AiBrief({ initial, upgradable }: AiBriefProps) {
   return (
     <Card className="overflow-hidden">
       <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 px-4 pt-4 sm:px-5">
-        <span
-          className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary [&_svg]:size-3.5"
-          aria-hidden
-        >
-          <Sparkles />
-        </span>
         <h2 className="text-[15px] font-semibold leading-tight tracking-[-0.01em]">{brief.headline}</h2>
         {brief.source === 'model' ? (
           <span className="rounded-full border border-border bg-muted px-1.5 py-0.5 text-2xs font-medium text-muted-foreground">

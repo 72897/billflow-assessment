@@ -3,7 +3,7 @@
  *
  * Settings are the part of the app that changes what an invoice looks like, so
  * the tests here are mostly about reach: a new prefix must show up in the next
- * number, a new currency in the next invoice — and neither may rewrite an
+ * number, a new currency in the next invoice - and neither may rewrite an
  * invoice that has already gone out (SET-06). Numbering gets its own suite
  * because two invoices created at the same moment must never collide (INV-10).
  */
@@ -190,7 +190,7 @@ describe('the logo', () => {
 
 // ---------------------------------------------------------------------------
 // Numbering. The counter lives on the settings row and is advanced by
-// `allocate_invoice_number()`, which takes a row lock — so the interesting
+// `allocate_invoice_number()`, which takes a row lock - so the interesting
 // cases are a user-typed number creating a gap, and several invoices being
 // created at once.
 // ---------------------------------------------------------------------------

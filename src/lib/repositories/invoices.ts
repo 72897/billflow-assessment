@@ -149,7 +149,7 @@ function buildFilters(
 }
 
 /**
- * Everything — search, status, client, date range, sort, pagination — happens
+ * Everything - search, status, client, date range, sort, pagination - happens
  * in this one statement, because filtering belongs on the server: a
  * 2 000-invoice account should not ship 2 000 rows to the browser to filter
  * three of them out.
@@ -193,7 +193,7 @@ export interface InvoiceStatusCounts {
  *
  * One statement with five `FILTER` clauses rather than five round trips. The
  * predicates are the same strings the list query uses, so a tab that reads "3"
- * cannot open onto four rows — and "Sent" excludes overdue here for the same
+ * cannot open onto four rows - and "Sent" excludes overdue here for the same
  * reason it does there: the tabs mirror the labels the user sees.
  */
 export async function countInvoicesByStatus(userId: string, params: InvoiceListQuery): Promise<InvoiceStatusCounts> {
@@ -338,7 +338,7 @@ function placeholderClient(id: string): Client {
 /**
  * The whole invoice page in one payload: header, items, client, timeline,
  * payments. Archived invoices are excluded, so a paid invoice the user deleted
- * (archived, to keep its payment record) 404s like any other deleted row —
+ * (archived, to keep its payment record) 404s like any other deleted row -
  * `restoreInvoice` is what brings it back.
  */
 export async function findInvoiceDetail(userId: string, invoiceId: string): Promise<InvoiceDetail | null> {
@@ -465,7 +465,7 @@ async function assertClientOwned(tx: Queryable, userId: string, clientId: string
 /**
  * Resolves the number to store. When the user accepted the suggested number we
  * call `allocate_invoice_number()`, which locks the settings row, skips numbers
- * already taken and advances the counter — so two invoices created at the same
+ * already taken and advances the counter - so two invoices created at the same
  * instant cannot collide (INV-14). A number the user typed themselves is used
  * verbatim and leaves the counter alone.
  */
@@ -566,7 +566,7 @@ export async function updateInvoice(
     }
     if (row.status === 'sent' && !input.confirmSentEdit) {
       throw new InvoiceStateError(
-        'This invoice has already been sent. Confirm to edit it — your client may be holding the earlier version.',
+        'This invoice has already been sent. Confirm to edit it - your client may be holding the earlier version.',
         { status: 'sent', requiresConfirmation: true },
       )
     }
@@ -622,7 +622,7 @@ export interface DeleteInvoiceResult {
 
 /**
  * Drafts are deleted. A sent invoice needs `force`, because the client may
- * already be holding it. A paid invoice is archived rather than deleted — the
+ * already be holding it. A paid invoice is archived rather than deleted - the
  * payment record has to survive (INV-13).
  */
 export async function deleteInvoice(userId: string, invoiceId: string, force = false): Promise<DeleteInvoiceResult> {
@@ -641,7 +641,7 @@ export async function deleteInvoice(userId: string, invoiceId: string, force = f
 
     if (row.status === 'sent' && !force) {
       throw new InvoiceStateError(
-        `${row.invoice_number} has already been sent. Deleting it removes your copy — your client keeps theirs.`,
+        `${row.invoice_number} has already been sent. Deleting it removes your copy - your client keeps theirs.`,
         { status: 'sent', requiresConfirmation: true },
       )
     }
@@ -725,7 +725,7 @@ export interface SendOutcome {
 /**
  * Marks an invoice sent and guarantees it has a share token, so "send by email"
  * and "copy link" are the same underlying capability. Re-sending keeps the
- * original `sent_at` — the timeline records each send separately.
+ * original `sent_at` - the timeline records each send separately.
  */
 export async function markInvoiceSent(
   userId: string,
@@ -807,7 +807,7 @@ export async function recordReminder(userId: string, invoiceId: string): Promise
       throw new InvoiceStateError('Send this invoice before reminding your client about it.', { status: 'draft' })
     }
     if (row.status === 'paid') {
-      throw new InvoiceStateError('This invoice is already paid — no reminder needed.', { status: 'paid' })
+      throw new InvoiceStateError('This invoice is already paid - no reminder needed.', { status: 'paid' })
     }
 
     const token = row.public_token ?? generatePublicToken()
@@ -826,7 +826,7 @@ export async function recordReminder(userId: string, invoiceId: string): Promise
 }
 
 /**
- * Revoking sets the token to NULL, which makes the public URL 404 immediately —
+ * Revoking sets the token to NULL, which makes the public URL 404 immediately -
  * the link is the credential, so there is nothing else to invalidate (SHR-04).
  * Regenerating issues a new one, breaking any link already shared.
  */
@@ -907,7 +907,7 @@ async function latestPayment(tx: Queryable, invoiceId: string): Promise<Payment 
 /**
  * The paid transition: insert the payment and flip the invoice, in one
  * transaction, with the invoice row locked (PAY-04). Callers are responsible
- * for having established the caller's right to settle this invoice — an owner
+ * for having established the caller's right to settle this invoice - an owner
  * session, or a valid public token.
  *
  * Idempotent on two levels: an `idempotencyKey` already seen returns the first

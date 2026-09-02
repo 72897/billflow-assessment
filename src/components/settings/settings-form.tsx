@@ -50,7 +50,7 @@ const FIELDS = [
 
 export interface SettingsFormProps {
   settings: BusinessSettings
-  /** `peek_invoice_number()` — what the next invoice would actually be called. */
+  /** `peek_invoice_number()` - what the next invoice would actually be called. */
   nextInvoiceNumber: string
 }
 
@@ -71,7 +71,7 @@ function toFormValues(settings: BusinessSettings): SettingsFormValues {
 }
 
 /**
- * Screen 13 — the business profile behind every invoice.
+ * Screen 13 - the business profile behind every invoice.
  *
  * Saving here changes the invoices you create *next*, never the ones already
  * sent: each invoice froze a copy of this profile when it was created, so a
@@ -171,7 +171,7 @@ function SettingsForm({ settings, nextInvoiceNumber }: SettingsFormProps) {
                       <SelectContent>
                         {SUPPORTED_CURRENCIES.map((option) => (
                           <SelectItem key={option.code} value={option.code}>
-                            {option.code} — {option.label}
+                            {option.code} - {option.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -222,7 +222,7 @@ function SettingsForm({ settings, nextInvoiceNumber }: SettingsFormProps) {
               label="Default notes"
               optional
               error={formState.errors.defaultNotes?.message}
-              hint="Payment instructions, bank details, a thank you — whatever every invoice should carry."
+              hint="Payment instructions, bank details, a thank you - whatever every invoice should carry."
             >
               <FieldTextarea
                 rows={3}

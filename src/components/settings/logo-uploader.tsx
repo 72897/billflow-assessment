@@ -23,7 +23,7 @@ const MAX_EDGE = 480
  * This is why the 2 MB server limit is almost never reached: a phone photo of a
  * logo goes in at 4 MB and comes out at about 30 KB, which is small enough to
  * live on the settings row and be frozen into every invoice snapshot. SVG is
- * passed through untouched — it is already resolution-independent, and putting it
+ * passed through untouched - it is already resolution-independent, and putting it
  * through a canvas would rasterise it.
  */
 async function shrink(file: File): Promise<string> {
@@ -123,7 +123,7 @@ function LogoUploader({ logoUrl, businessName }: LogoUploaderProps) {
         <div className="grid h-20 w-32 shrink-0 place-items-center overflow-hidden rounded-md border border-dashed border-border bg-muted/40 p-2">
           {logoUrl ? (
             // A logo is an arbitrary user upload, so `next/image` cannot size it
-            // ahead of time — a plain <img> is the honest tool here.
+            // ahead of time - a plain <img> is the honest tool here.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={logoUrl}

@@ -8,7 +8,7 @@ import { Toaster as Sonner, toast } from 'sonner'
  *
  * Toasts confirm things that already happened ("Invoice sent to …") and report
  * failures that do not belong to a single field. Anything a form can point at
- * stays on the form — a toast that scrolls away is the wrong place for a
+ * stays on the form - a toast that scrolls away is the wrong place for a
  * validation message.
  */
 function Toaster() {

@@ -175,17 +175,17 @@ export function formatAmount(minor: number, currency: string = DEFAULT_CURRENCY)
   return numberFormatter(meta.locale, digits, digits).format(Math.round(minor) / MINOR_UNITS_PER_UNIT)
 }
 
-/** `6490000, 'INR'` -> `"INR 64,900"` — the primary money style in the UI. */
+/** `6490000, 'INR'` -> `"INR 64,900"` - the primary money style in the UI. */
 export function formatMoney(minor: number, currency: string = DEFAULT_CURRENCY): string {
   return `${currencyMeta(currency).code} ${formatAmount(minor, currency)}`
 }
 
-/** `6490000, 'INR'` -> `"₹64,900"` — for tight spots such as chart axes. */
+/** `6490000, 'INR'` -> `"₹64,900"` - for tight spots such as chart axes. */
 export function formatMoneySymbol(minor: number, currency: string = DEFAULT_CURRENCY): string {
   return `${currencySymbol(currency)}${formatAmount(minor, currency)}`
 }
 
-/** Always two decimals — used on the PDF, where columns must line up. */
+/** Always two decimals - used on the PDF, where columns must line up. */
 export function formatAmountExact(minor: number, currency: string = DEFAULT_CURRENCY): string {
   const meta = currencyMeta(currency)
   return numberFormatter(meta.locale, 2, 2).format(Math.round(minor) / MINOR_UNITS_PER_UNIT)

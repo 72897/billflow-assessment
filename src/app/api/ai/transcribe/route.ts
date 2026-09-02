@@ -26,7 +26,7 @@ const EXTENSIONS: Record<string, string> = {
  *
  * Nothing is stored. The recording is streamed straight to transcription and the
  * transcript comes back to the browser, which drops it into the same textarea
- * someone could have typed into — so the voice path is a shortcut to the existing
+ * someone could have typed into - so the voice path is a shortcut to the existing
  * flow rather than a second one to keep working.
  *
  * The audio is capped before it leaves this process: transcription is billed by

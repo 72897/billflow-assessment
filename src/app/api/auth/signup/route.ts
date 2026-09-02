@@ -7,7 +7,7 @@ import { createUser, emailIsTaken } from '@/lib/repositories/users'
 import { signupSchema } from '@/lib/validation/auth'
 
 /**
- * Creates an account and signs the visitor straight in — nobody wants to type
+ * Creates an account and signs the visitor straight in - nobody wants to type
  * their password twice to see an empty dashboard.
  *
  * Rate-limited per IP: signup writes a bcrypt hash and a settings row, so it is

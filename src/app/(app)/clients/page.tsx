@@ -18,15 +18,15 @@ import { clientListQuerySchema } from '@/lib/validation/client'
 export const metadata = { title: 'Clients' }
 
 const SORT_OPTIONS = [
-  { value: 'name_asc', label: 'Name A–Z' },
-  { value: 'name_desc', label: 'Name Z–A' },
+  { value: 'name_asc', label: 'Name A-Z' },
+  { value: 'name_desc', label: 'Name Z-A' },
   { value: 'billed_desc', label: 'Most billed' },
   { value: 'newest', label: 'Newest first' },
   { value: 'oldest', label: 'Oldest first' },
 ] as const
 
 /**
- * Screen 5 — the clients list.
+ * Screen 5 - the clients list.
  *
  * Search, sort and pagination are all resolved in SQL and all live in the URL,
  * so this page has no client-side filtering to get out of step with the server
@@ -66,7 +66,7 @@ export default async function ClientsPage({ searchParams }: { searchParams: Prom
           <EmptyState
             icon={<Users />}
             title="No clients yet"
-            description="Add the first person or company you bill. You only need a name to start — everything else can follow."
+            description="Add the first person or company you bill. You only need a name to start - everything else can follow."
             action={
               <Button asChild>
                 <Link href="/clients/new">

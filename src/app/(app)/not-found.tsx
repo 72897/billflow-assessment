@@ -10,7 +10,7 @@ export const metadata = { title: 'Not found' }
  * The in-shell 404, for `notFound()` thrown by a client or invoice page.
  *
  * Without this boundary the root `not-found.tsx` takes over the whole viewport and
- * the signed-in user loses the sidebar — which reads like being logged out rather
+ * the signed-in user loses the sidebar - which reads like being logged out rather
  * than like following a dead link. Here the navigation stays put and only the
  * content area says "gone".
  *

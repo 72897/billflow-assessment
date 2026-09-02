@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
      * A share token is a bearer credential, so no crawler may keep a copy of
      * anything it opens. The public page already says `noindex` in its metadata;
      * this is the same instruction as a header, which is the version that also
-     * covers the PDF and receipt downloads — a `<meta>` tag cannot.
+     * covers the PDF and receipt downloads - a `<meta>` tag cannot.
      */
     const noIndex = [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive, nosnippet' }]
 

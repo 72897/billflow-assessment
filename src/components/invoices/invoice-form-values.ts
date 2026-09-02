@@ -3,7 +3,7 @@
  *
  * Every numeric field here is a **string**, deliberately. The validation schema
  * transforms `"1.5"` into `1500` thousandths and `"25000"` into `2500000` minor
- * units, and that transform must happen exactly once — on the server, which is
+ * units, and that transform must happen exactly once - on the server, which is
  * the only place whose arithmetic can be trusted. If the browser posted the
  * schema's *parsed* output instead, the server would re-scale numbers that were
  * already scaled and a quantity of 1.5 would arrive as 1,500. So the form keeps
@@ -49,7 +49,7 @@ function rateInputValue(basisPoints: number): string {
 
 export interface DefaultsInput {
   settings: Pick<BusinessSettings, 'currency' | 'defaultTaxRate' | 'defaultNotes' | 'paymentTermsDays'>
-  /** Peeked from `peek_invoice_number` — a suggestion, not a reservation. */
+  /** Peeked from `peek_invoice_number` - a suggestion, not a reservation. */
   nextInvoiceNumber: string
   /** From `?client=` on the new-invoice route. */
   presetClientId?: string

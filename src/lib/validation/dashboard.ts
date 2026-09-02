@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 /**
  * The dashboard takes no input beyond the chart window, and an unknown value
- * should show the default chart rather than an error page — so this one
+ * should show the default chart rather than an error page - so this one
  * `.catch()`es instead of rejecting.
  *
  * The default is a rolling 30 days rather than the calendar month: on the 2nd of

@@ -17,7 +17,7 @@ export const inputBase =
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
   /** Draws the error ring and is forwarded to `aria-invalid`. */
   invalid?: boolean
-  /** Rendered inside the field, before the text — a currency symbol, say. */
+  /** Rendered inside the field, before the text - a currency symbol, say. */
   prefix?: React.ReactNode
   suffix?: React.ReactNode
 }

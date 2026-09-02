@@ -57,7 +57,7 @@ function DeleteInvoiceDialog({ open, onOpenChange, invoice, redirectTo }: Delete
       title={paid ? `Archive ${invoice.invoiceNumber}?` : `Delete ${invoice.invoiceNumber}?`}
       description={
         paid
-          ? 'This invoice has been paid, so it is archived instead of deleted — the payment stays in your records.'
+          ? 'This invoice has been paid, so it is archived instead of deleted - the payment stays in your records.'
           : sent
             ? `${invoice.clientName} has already been sent this invoice. Deleting it removes your copy only.`
             : 'This invoice has never been sent, so nothing leaves your records but this draft. It cannot be undone.'

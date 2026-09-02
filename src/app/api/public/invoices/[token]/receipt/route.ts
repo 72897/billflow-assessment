@@ -6,7 +6,7 @@ import { clientIpFrom, enforceRateLimit } from '@/lib/rate-limit'
 import { getPublicInvoiceOrThrow } from '@/lib/repositories/public'
 
 /**
- * The receipt a client can download straight after paying, without an account —
+ * The receipt a client can download straight after paying, without an account -
  * the last step of the payment flow, and the thing they will forward to whoever
  * does their bookkeeping (PAY-06).
  */

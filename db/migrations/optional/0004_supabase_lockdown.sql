@@ -1,12 +1,12 @@
 -- ============================================================================
--- BillFlow — 0004_supabase_lockdown.sql
+-- BillFlow - 0004_supabase_lockdown.sql
 --
 -- HOST-SPECIFIC, and not part of `npm run db:migrate`.
 --
 -- On Supabase every project also exposes an auto-generated REST API over the
 -- same database, reachable at https://<ref>.supabase.co/rest/v1/<table> with
--- the project's anon key. That key is designed to be public — it ships inside
--- browser bundles — so any table left readable by the `anon` role is readable
+-- the project's anon key. That key is designed to be public - it ships inside
+-- browser bundles - so any table left readable by the `anon` role is readable
 -- by the whole internet, regardless of how careful the application is.
 --
 -- BillFlow does not use that API at all. It connects as the `postgres` role
@@ -19,7 +19,7 @@
 --      query returns zero rows. `postgres` owns them and is not FORCEd, so the
 --      application is unaffected.
 --   2. REVOKE the table grants as well, so the API answers "permission denied"
---      instead of an empty list — a clearer signal, and defence in depth if a
+--      instead of an empty list - a clearer signal, and defence in depth if a
 --      policy is ever added by accident.
 --
 -- Safe to run more than once. Skips silently on a database with no Supabase

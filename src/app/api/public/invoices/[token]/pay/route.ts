@@ -8,7 +8,7 @@ import { payPublicInvoice } from '@/lib/repositories/public'
 import { paymentSchema } from '@/lib/validation/invoice'
 
 /**
- * Pays an invoice from the public link — the one write an anonymous caller can
+ * Pays an invoice from the public link - the one write an anonymous caller can
  * make, so it is the most carefully fenced endpoint in the app.
  *
  * Three guards, all in place before anything is written: a per-token and per-IP

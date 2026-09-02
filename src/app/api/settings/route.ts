@@ -14,7 +14,7 @@ export const GET = route(async () => {
  * Saves the business profile.
  *
  * Everything here is letterhead: name, address, currency, prefix, default tax and
- * terms. Changing it affects invoices created *from now on* — existing rows keep
+ * terms. Changing it affects invoices created *from now on* - existing rows keep
  * the snapshot frozen at creation, so a client's copy never silently changes
  * after they have been sent it (SET-05).
  */

@@ -131,7 +131,7 @@ export async function getClientOrThrow(userId: string, clientId: string): Promis
 /**
  * What the repository needs in order to write a client. Only the name is
  * required: the form always sends the rest as empty strings, but a caller that
- * builds the object by hand — a seed script, a test — should not have to.
+ * builds the object by hand - a seed script, a test - should not have to.
  */
 export type ClientWriteInput = Pick<ClientInput, 'name'> & Partial<Omit<ClientInput, 'name'>>
 

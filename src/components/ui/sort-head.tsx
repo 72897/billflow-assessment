@@ -32,7 +32,7 @@ export interface SortHeadProps {
  * which is what lets "largest unpaid invoice first" be a link someone can send.
  *
  * `aria-sort` goes on the cell rather than the button, because that is where a
- * screen reader looks for it, and the arrow only appears on the active column —
+ * screen reader looks for it, and the arrow only appears on the active column -
  * an inactive one shows a faint pair of chevrons on hover, so the whole header
  * row does not turn into a wall of arrows.
  */

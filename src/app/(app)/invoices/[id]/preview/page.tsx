@@ -10,7 +10,7 @@ import { findInvoiceDetail } from '@/lib/repositories/invoices'
 export const metadata = { title: 'Invoice preview' }
 
 /**
- * Screen 12 — the invoice as the client will see it.
+ * Screen 12 - the invoice as the client will see it.
  *
  * An A4 sheet on a plain background, with the app's own chrome pushed out of the
  * way: this is the page to open before sending, and the page to hit Ctrl-P on.

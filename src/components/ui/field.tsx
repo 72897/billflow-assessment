@@ -27,7 +27,7 @@ export interface FieldControlProps {
  *
  * Spread onto the input: `<Input {...useFieldProps()} />`. That is what keeps
  * the label's `for`, the error's `aria-describedby` and `aria-invalid` in step
- * with each other — accessibility that has to be re-wired by hand on every form
+ * with each other - accessibility that has to be re-wired by hand on every form
  * is accessibility that will be wrong on some of them.
  */
 export function useFieldProps(): FieldControlProps {
@@ -117,7 +117,7 @@ const FieldTextarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Fi
  * A `SelectTrigger` wired to the surrounding `Field`.
  *
  * Radix renders the trigger as a button, so the `Field`'s `<label for>` binds to
- * it exactly as it would to an input — clicking the label focuses the select and
+ * it exactly as it would to an input - clicking the label focuses the select and
  * a screen reader reads the two together. Without this the label would point at
  * an id that no element has.
  */

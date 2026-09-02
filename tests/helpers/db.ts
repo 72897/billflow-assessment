@@ -3,8 +3,8 @@
  *
  * Every test file runs against its own in-memory PostgreSQL (PGlite with
  * `memory://`), created fresh by the `forks` pool. That means the integration
- * tests exercise the real schema — constraints, triggers, plpgsql functions and
- * transactions included — with no external service and no cleanup to forget.
+ * tests exercise the real schema - constraints, triggers, plpgsql functions and
+ * transactions included - with no external service and no cleanup to forget.
  *
  * DATABASE_URL is deleted deliberately: a test run must never be able to reach
  * a real database.

@@ -10,7 +10,7 @@ import { publicLinkActionSchema } from '@/lib/validation/invoice'
  * Creates, revokes or rotates the share link.
  *
  * The token *is* the credential, so revoking simply sets it to NULL and the URL
- * 404s on the next request — there is no session to expire and nothing else to
+ * 404s on the next request - there is no session to expire and nothing else to
  * clean up. Regenerating issues a new token, which invalidates any link the user
  * has already pasted somewhere they regret (SHR-04).
  */

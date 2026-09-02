@@ -2,7 +2,7 @@
  * The one place a model gets called.
  *
  * Groq speaks the OpenAI wire format, so this is a thin `fetch` wrapper rather
- * than an SDK — two endpoints do not justify a dependency, and a hand-rolled
+ * than an SDK - two endpoints do not justify a dependency, and a hand-rolled
  * client is the only way to be sure of the timeout and the error classification.
  *
  * Failures are sorted the same way email failures are (see
@@ -10,11 +10,11 @@
  * bad moment is another, and telling them apart decides whether the caller falls
  * back, apologises, or offers a retry button that will actually work.
  *
- *   - `AiUnavailableError` — no key, a rejected key, a model that is not on the
+ *   - `AiUnavailableError` - no key, a rejected key, a model that is not on the
  *     account. Retrying is pointless; the caller should use its own fallback.
- *   - `AiUnreadableError` — the request got through and the model declined to
+ *   - `AiUnreadableError` - the request got through and the model declined to
  *     produce the structured answer. The input is the problem, not the service.
- *   - `AiTransientError` — timeout, rate limit, 5xx. Retrying is exactly right.
+ *   - `AiTransientError` - timeout, rate limit, 5xx. Retrying is exactly right.
  */
 
 const GROQ_BASE = 'https://api.groq.com/openai/v1'
@@ -61,7 +61,7 @@ interface GroqErrorBody {
  * Maps an HTTP failure onto one of the three error classes.
  *
  * `json_validate_failed` is the interesting one: it is a 400, but it means the
- * model answered in prose instead of the schema — which is what happens when the
+ * model answered in prose instead of the schema - which is what happens when the
  * text is not a description of work at all, or when it is an attempt to talk to
  * the model rather than through it. That is the user's input to fix, so it comes
  * back as "unreadable" and the route turns it into a 422, not a 500.
@@ -129,7 +129,7 @@ interface ChatCompletion {
 }
 
 /**
- * One structured-output chat call. Returns the parsed JSON, unvalidated —
+ * One structured-output chat call. Returns the parsed JSON, unvalidated -
  * callers run it through zod, because `strict: true` guarantees the shape but
  * not that the values inside make sense.
  */
@@ -173,7 +173,7 @@ export async function groqChatJson({ system, user, schema, schemaName, maxTokens
     return JSON.parse(content)
   } catch {
     // Schema-enforced output that is not JSON means the model was cut off
-    // mid-object — a token budget problem, so retrying can genuinely help.
+    // mid-object - a token budget problem, so retrying can genuinely help.
     throw new AiTransientError('The AI answer was cut short. Please try again.')
   }
 }
@@ -181,7 +181,7 @@ export async function groqChatJson({ system, user, schema, schemaName, maxTokens
 export interface TranscribeRequest {
   audio: Blob
   filename: string
-  /** Vocabulary hint — client names and money words, to steer the spelling. */
+  /** Vocabulary hint - client names and money words, to steer the spelling. */
   prompt?: string
 }
 

@@ -7,7 +7,7 @@
  * page 4 of a list that now holds three rows would report a total of zero and
  * the pager would tell the user there is nothing here at all.
  *
- * That happens for real — someone bookmarks page 4, then deletes invoices, or a
+ * That happens for real - someone bookmarks page 4, then deletes invoices, or a
  * filter narrows the list while they are two pages deep. So when a page past the
  * first comes back empty, one extra `count(*)` establishes the real total and
  * the UI can send them to a page that exists.

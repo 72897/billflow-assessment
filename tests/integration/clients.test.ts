@@ -4,7 +4,7 @@
  * Two things carry most of the weight here. Deleting a client who has been
  * invoiced must not destroy invoice history, so the repository archives instead
  * (CL-08). And the money shown next to a client comes from a SQL view, not from
- * TypeScript adding numbers up — so the tests move invoices through their real
+ * TypeScript adding numbers up - so the tests move invoices through their real
  * transitions and then read the rollup back.
  */
 
@@ -194,7 +194,7 @@ describe('deleting versus archiving', () => {
 
     expect(await deleteClient(owner.id, client.id, true)).toEqual({ outcome: 'archived', invoiceCount: 1 })
 
-    // The invoice — and its payment — survive the client being removed.
+    // The invoice - and its payment - survive the client being removed.
     const kept = await query<{ status: string }>('SELECT status FROM invoices WHERE id = $1', [invoice.id])
     expect(kept.rows[0]?.status).toBe('paid')
     const payments = await query('SELECT id FROM payments WHERE invoice_id = $1', [invoice.id])
@@ -282,7 +282,7 @@ describe('billing rollups', () => {
 })
 
 // ---------------------------------------------------------------------------
-// The list. Search, sort and pagination all happen in SQL — the assertions
+// The list. Search, sort and pagination all happen in SQL - the assertions
 // below are about what came back from Postgres, not about anything filtered
 // afterwards in TypeScript.
 // ---------------------------------------------------------------------------
@@ -343,7 +343,7 @@ describe('the client list', () => {
     expect((await listClients(listerId, clientQuery({ q: 'lumen' }))).rows.map((row) => row.name)).toEqual([
       'Lumen Studio',
     ])
-    // Company only — 'Trading' appears in no name or email.
+    // Company only - 'Trading' appears in no name or email.
     expect((await listClients(listerId, clientQuery({ q: 'Trading' }))).rows.map((row) => row.name)).toEqual([
       'Atlas Foods',
     ])
@@ -390,7 +390,7 @@ describe('the client list', () => {
   })
 
   it('counts the filtered total, not the whole table', async () => {
-    // 'lumen' is in that client's name, company and email at once — the join
+    // 'lumen' is in that client's name, company and email at once - the join
     // must not count it three times.
     expect((await listClients(listerId, clientQuery({ q: 'lumen' }))).total).toBe(1)
 

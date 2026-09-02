@@ -2,7 +2,7 @@
  * Plain language in, invoice draft out.
  *
  * "website design ₹25,000 with 18% GST, 10% off, net 14 for Acme" becomes line
- * items, a tax rate, a discount and a due date — as **strings**, in exactly the
+ * items, a tax rate, a discount and a due date - as **strings**, in exactly the
  * shape `InvoiceFormValues` holds them, so applying a draft is assignment rather
  * than conversion. Every number the model returns is re-parsed here with the same
  * money helpers the server uses on submit, and the arithmetic is done locally:
@@ -11,9 +11,9 @@
  * Two paths produce a draft, and the caller cannot tell which ran except by the
  * `source` field:
  *
- *   - `model` — Groq with a strict JSON schema, which handles prose, spelled-out
+ *   - `model` - Groq with a strict JSON schema, which handles prose, spelled-out
  *     amounts, lakh notation and multiple items in one sentence.
- *   - `rules` — a local regex parser, used when there is no API key, when the key
+ *   - `rules` - a local regex parser, used when there is no API key, when the key
  *     is refused, or when the model declines. It is worse, not useless: it gets
  *     the common shapes right without a network call, which keeps the feature
  *     honest on a fresh clone. Same reasoning as the email outbox.
@@ -86,7 +86,7 @@ const TEXT_OR_NULL = { type: ['string', 'null'] } as const
  * The JSON Schema handed to Groq with `strict: true`.
  *
  * Every numeric field is a **string** on purpose. A JSON number would arrive as
- * a float — `25000.000000001` is a real thing to receive — and the whole money
+ * a float - `25000.000000001` is a real thing to receive - and the whole money
  * layer of this app exists to keep floats away from amounts. A decimal string
  * goes through `parseDecimalToMinor` exactly like something typed into the form.
  */
@@ -153,7 +153,7 @@ interface ModelDraft {
  * The system prompt.
  *
  * Client names are listed so "for Acme" resolves to the row that already exists
- * rather than to a new spelling of it — but only the names go over the wire, and
+ * rather than to a new spelling of it - but only the names go over the wire, and
  * the model is never given an id to return. Matching an id is done locally, so a
  * hallucinated identifier cannot select somebody else's client.
  */
@@ -169,7 +169,7 @@ function systemPrompt(context: DraftContext): string {
     'Rules:',
     '- Return every number as a plain decimal string: no currency symbols, no thousands separators, no words. "40k" is "40000", "1.2 lakh" is "120000".',
     '- `rate` is the price of ONE unit in major currency units. `quantity` defaults to "1".',
-    '- "6 hours at 1500" is quantity "6", rate "1500" — never multiply them out.',
+    '- "6 hours at 1500" is quantity "6", rate "1500" - never multiply them out.',
     '- Split distinct pieces of work into separate items. Keep `description` short, like a line on a bill.',
     '- `detail` is an optional second line. Use it only to add information the description does not already carry; otherwise return an empty string. Never repeat the description.',
     '- Never invent work, amounts, quantities or clients that the note does not mention. Leave a field null rather than guessing.',
@@ -191,7 +191,7 @@ function systemPrompt(context: DraftContext): string {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Normalisation — the model reads, this file calculates                       */
+/* Normalisation - the model reads, this file calculates                       */
 /* -------------------------------------------------------------------------- */
 
 function collapse(value: unknown, max: number): string {
@@ -237,7 +237,7 @@ function comparable(value: string): string {
  * feature safe: whatever the model says, the draft can only ever point at a
  * client the caller already loaded for this user.
  *
- * An unmatched name is not an error — it is how "for a new client" reads — so it
+ * An unmatched name is not an error - it is how "for a new client" reads - so it
  * comes back as `unknown` with the name intact, and the UI offers to add them.
  */
 function matchClient(
@@ -258,7 +258,7 @@ function matchClient(
   if (exact) return { clientId: exact.client.id, clientName: exact.client.name, clientMatch: 'exact' }
 
   // "Acme" for "Acme Technologies", or "Acme Technologies Pvt Ltd" for "Acme
-  // Technologies" — one containing the other is a match worth offering, but it
+  // Technologies" - one containing the other is a match worth offering, but it
   // is reported as partial so the UI can say which client it chose.
   const partial = candidates.find((entry) =>
     entry.keys.some((key) => (needle.length >= 4 && key.includes(needle)) || (key.length >= 4 && needle.includes(key))),
@@ -318,9 +318,9 @@ function normaliseItems(raw: DraftParts['items'], warnings: string[]): DraftItem
   // that push the useful ones off the screen.
   const unpriced = items.filter((item) => item.amount === 0)
   if (unpriced.length === 1) {
-    warnings.push(`No amount was mentioned for “${unpriced[0]!.description}” — add the rate.`)
+    warnings.push(`No amount was mentioned for “${unpriced[0]!.description}” - add the rate.`)
   } else if (unpriced.length > 1) {
-    warnings.push(`${unpriced.length} lines have no amount yet — add their rates.`)
+    warnings.push(`${unpriced.length} lines have no amount yet - add their rates.`)
   }
   if (items.some((item) => item.description === '')) warnings.push('One line still needs a description.')
 
@@ -330,7 +330,7 @@ function normaliseItems(raw: DraftParts['items'], warnings: string[]): DraftItem
 /**
  * Turns loosely-parsed parts into a draft that is safe to apply.
  *
- * Nothing here takes a value on faith: percentages are clamped to 0–100, a
+ * Nothing here takes a value on faith: percentages are clamped to 0-100, a
  * discount without a type is dropped rather than guessed at, a currency has to
  * be one this app supports, and a due date beyond a year is treated as a
  * misread. The result is a draft that cannot put the form into a state the
@@ -358,7 +358,7 @@ function assemble(parts: DraftParts, context: DraftContext, source: 'model' | 'r
 
   const { clientId, clientName, clientMatch } = matchClient(parts.clientName, context.clients)
   if (clientMatch === 'unknown' && clientName) {
-    warnings.push(`“${clientName}” is not one of your clients yet — choose one, or add them first.`)
+    warnings.push(`“${clientName}” is not one of your clients yet - choose one, or add them first.`)
   }
 
   const summary =
@@ -417,7 +417,7 @@ function partsFromModel(raw: unknown): DraftParts | null {
 }
 
 /* -------------------------------------------------------------------------- */
-/* The local parser — no key, no network, still useful                         */
+/* The local parser - no key, no network, still useful                         */
 /* -------------------------------------------------------------------------- */
 
 const CURRENCY = '₹|\\brs\\.?|\\binr\\b|\\$|\\busd\\b|€|\\beur\\b|£|\\bgbp\\b|\\baed\\b'
@@ -533,7 +533,7 @@ function cutSpan(text: string, index: number, length: number, keep = ''): string
 /**
  * The last thing in the segment that reads like money.
  *
- * A bare one- or two-digit number is not money — it is "Logo v2" or "Phase 3" —
+ * A bare one- or two-digit number is not money - it is "Logo v2" or "Phase 3" -
  * so an amount has to be recognisable: a currency mark, a scale word, a decimal,
  * or three digits. Guessing wrong here puts a wrong price on an invoice, which is
  * far worse than leaving the rate blank and saying so.
@@ -562,7 +562,7 @@ function pairedInSegment(segment: string): { quantity: string; rate: number; res
   const unit = segment.match(QTY_UNIT_AT_RATE)
   if (unit?.index !== undefined) {
     const rate = scaledMinor(unit[3]!, unit[4])
-    // The words between the quantity and the price are the description — "6
+    // The words between the quantity and the price are the description - "6
     // hours of design QA at 1500" must not lose "of design QA" with the span.
     if (rate !== null && rate > 0) return { quantity: unit[1]!, rate, rest: cutSpan(segment, unit.index, unit[0].length, unit[2]) }
   }
@@ -598,7 +598,7 @@ function itemFromSegment(raw: string): DraftParts['items'][number] | null {
  * The user's own client names are tried first and longest-first, so "Acme
  * Technologies" is not shortened to "Acme". Failing that, a run of capitalised
  * words after "for" or "to" is a good guess at a name the account does not have
- * yet — and if that misses too, nothing is claimed.
+ * yet - and if that misses too, nothing is claimed.
  */
 function clientInText(text: string, clients: readonly DraftClient[]): { name: string | null; rest: string } {
   const names = clients
@@ -700,7 +700,7 @@ export function draftFromRules(text: string, context: DraftContext): InvoiceDraf
  * Builds a draft from a note, preferring the model.
  *
  * The fallback ladder is deliberate. A missing or rejected key, or a model that
- * declines the text, drops to the local parser — a weaker answer beats a dead
+ * declines the text, drops to the local parser - a weaker answer beats a dead
  * button. A timeout or a rate limit is *not* absorbed: it throws, so the caller
  * can say "try again" and mean it. And if neither path finds a single line item,
  * that is the one case worth refusing, because there is nothing to apply.

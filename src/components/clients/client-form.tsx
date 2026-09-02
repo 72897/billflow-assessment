@@ -23,7 +23,7 @@ export interface ClientFormProps {
   client?: Client
   /** Where to go after a successful save. Defaults to the client's own page. */
   returnTo?: string
-  /** Rendered beside Cancel — the edit screen's Delete action. */
+  /** Rendered beside Cancel - the edit screen's Delete action. */
   danger?: React.ReactNode
 }
 
@@ -32,7 +32,7 @@ export interface ClientFormProps {
  *
  * The resolver is the same `clientSchema` the route handler parses, so the rule
  * that rejects a value in the browser is literally the rule that rejects it on
- * the server — there is no second copy to drift. The server still validates:
+ * the server - there is no second copy to drift. The server still validates:
  * this form is a convenience, not a gate.
  */
 function ClientForm({ client, returnTo, danger }: ClientFormProps) {

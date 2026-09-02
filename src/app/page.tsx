@@ -8,7 +8,7 @@ import { APP_NAME } from '@/lib/config'
 import { formatMoneySymbol } from '@/lib/money'
 
 export const metadata = {
-  title: { absolute: `${APP_NAME} — Invoicing that gets you paid` },
+  title: { absolute: `${APP_NAME} - Invoicing that gets you paid` },
   description:
     'Create professional invoices, send them as a link your client can pay without signing in, and watch what is paid, outstanding and overdue on one dashboard.',
 }
@@ -22,12 +22,12 @@ const HIGHLIGHTS = [
   {
     icon: Send,
     title: 'Send',
-    body: 'Email the invoice or hand over a private link. Your client opens it in a browser — no account, no app, no PDF attachment to lose.',
+    body: 'Email the invoice or hand over a private link. Your client opens it in a browser - no account, no app, no PDF attachment to lose.',
   },
   {
     icon: Clock,
     title: 'Track',
-    body: 'Draft, sent, paid — and overdue the moment a due date passes, without anyone remembering to change it. Every send, view and reminder is logged.',
+    body: 'Draft, sent, paid - and overdue the moment a due date passes, without anyone remembering to change it. Every send, view and reminder is logged.',
   },
   {
     icon: Wallet,
@@ -122,8 +122,8 @@ function InvoicePreview() {
 /**
  * The landing page answers to the session.
  *
- * Someone already signed in has no use for "Sign in" and "Create account" — the
- * middleware would only bounce them off /login again — so the same page offers
+ * Someone already signed in has no use for "Sign in" and "Create account" - the
+ * middleware would only bounce them off /login again - so the same page offers
  * the way back into the app instead. Reading the cookie makes this route
  * dynamic, which is the right trade: a marketing page that contradicts the
  * user's own state looks broken in a way a cache hit does not repay.

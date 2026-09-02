@@ -7,8 +7,8 @@ export const metadata = { title: 'Invoice not available', robots: { index: false
 /**
  * A share link that no longer resolves.
  *
- * Four different situations land here — the token was revoked, the invoice was
- * archived, the link was mistyped, or it never existed — and they are deliberately
+ * Four different situations land here - the token was revoked, the invoice was
+ * archived, the link was mistyped, or it never existed - and they are deliberately
  * indistinguishable. Anything more specific would let someone probe for live
  * tokens by watching how the wording changes.
  *

@@ -57,7 +57,7 @@ export interface CreateUserInput {
  * The account and its settings row are created together: every later read can
  * then assume settings exist, and a half-created account can never be logged
  * into. The unique index on `lower(email)` is the real guard against two
- * simultaneous signups — the pre-check below only exists to produce a friendly
+ * simultaneous signups - the pre-check below only exists to produce a friendly
  * message in the common case.
  */
 export async function createUser(input: CreateUserInput): Promise<UserRecord> {

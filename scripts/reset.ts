@@ -6,7 +6,7 @@ import { runMigrations } from '@/lib/db/migrate'
  *   npm run db:reset            drop, migrate, seed
  *   npm run db:reset -- --bare  drop and migrate, no demo data
  *
- * Drops only the objects this app created, by name — never `DROP SCHEMA public`,
+ * Drops only the objects this app created, by name - never `DROP SCHEMA public`,
  * which on a managed provider would take extensions and other schemas with it.
  * Refuses to run against production unless you really insist, because the whole
  * point of the command is that it destroys data.
@@ -55,7 +55,7 @@ async function main() {
   console.log(`  ${report.applied.length} migrations applied`)
 
   if (bare) {
-    console.log('\nDone — schema only. Run `npm run db:seed` when you want demo data.\n')
+    console.log('\nDone - schema only. Run `npm run db:seed` when you want demo data.\n')
     return
   }
 
@@ -70,7 +70,7 @@ async function main() {
 
   console.log(`  seeded ${seed.clientCount} clients and ${seed.invoiceCount} invoices`)
   console.log(`\nDemo login: ${seed.email} / ${seed.password}`)
-  console.log(`Public invoice: ${seed.payableUrl ?? '—'}\n`)
+  console.log(`Public invoice: ${seed.payableUrl ?? '-'}\n`)
 }
 
 main()

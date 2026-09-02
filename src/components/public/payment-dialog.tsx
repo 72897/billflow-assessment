@@ -27,7 +27,7 @@ export interface PaymentSuccess {
   method: Payment['method']
   cardLast4: string | null
   paidAt: string
-  /** The idempotency key matched an earlier attempt — nothing was charged twice. */
+  /** The idempotency key matched an earlier attempt - nothing was charged twice. */
   alreadyPaid: boolean
   receiptSent: boolean
 }
@@ -52,7 +52,7 @@ const METHODS: Array<{ value: Method; title: string; description: string; icon: 
 ]
 
 /**
- * Screen 18 — the payment sheet on the public link.
+ * Screen 18 - the payment sheet on the public link.
  *
  * There is no card form, and that is the honest design rather than a shortcut:
  * settlement here does not run through a processor, so asking for a card number
@@ -153,14 +153,14 @@ function PaymentDialog({
           <Field
             label={`Message for ${businessName}`}
             optional
-            hint="Goes on the payment record — a PO number, say."
+            hint="Goes on the payment record - a PO number, say."
           >
             <FieldTextarea
               rows={2}
               value={note}
               onChange={(event) => setNote(event.target.value)}
               maxLength={300}
-              placeholder="Paid against PO 88213 — thanks!"
+              placeholder="Paid against PO 88213 - thanks!"
               disabled={paying}
             />
           </Field>

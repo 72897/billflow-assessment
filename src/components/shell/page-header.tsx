@@ -14,7 +14,7 @@ export interface PageHeaderProps {
   actions?: React.ReactNode
   breadcrumbs?: Crumb[]
   className?: string
-  /** Extra content below the title row — filter bars, tabs, a status strip. */
+  /** Extra content below the title row - filter bars, tabs, a status strip. */
   children?: React.ReactNode
 }
 

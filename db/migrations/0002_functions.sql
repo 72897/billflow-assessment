@@ -1,5 +1,5 @@
 -- ============================================================================
--- BillFlow — 0002_functions.sql
+-- BillFlow - 0002_functions.sql
 -- Invoice numbering (concurrency-safe), derived status, reporting views.
 -- ============================================================================
 
@@ -120,7 +120,7 @@ $$ LANGUAGE plpgsql;
 
 
 -- ---------------------------------------------------------------------------
--- client_financials — per-client billing rollup for the client detail screen
+-- client_financials - per-client billing rollup for the client detail screen
 -- Drafts are excluded from "billed" because a draft has not been issued yet.
 -- ---------------------------------------------------------------------------
 

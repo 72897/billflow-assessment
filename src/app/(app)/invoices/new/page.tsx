@@ -9,11 +9,11 @@ import { getSettings, peekInvoiceNumber } from '@/lib/repositories/settings'
 export const metadata = { title: 'New invoice' }
 
 /**
- * Screen 9 — a blank invoice.
+ * Screen 9 - a blank invoice.
  *
  * The number is *peeked*, not allocated: two tabs open on this page see the same
  * suggestion, and the sequence only advances when one of them saves. That is the
- * right trade — a reserved-then-abandoned number leaves a permanent hole in a
+ * right trade - a reserved-then-abandoned number leaves a permanent hole in a
  * book of account, and a duplicate is caught by a unique index and reported on
  * the field.
  */

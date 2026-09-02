@@ -2,7 +2,7 @@
  * The one place HTTP happens.
  *
  * Route handlers do three things: authenticate, validate, call a repository.
- * They never build a status code or an error body themselves — they throw an
+ * They never build a status code or an error body themselves - they throw an
  * `AppError` and this module turns it into JSON. That keeps every endpoint
  * answering the same envelope (`{ ok, data }` / `{ ok, error }`), and means an
  * unexpected exception cannot leak a stack trace or a SQL fragment to a client.

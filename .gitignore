@@ -23,7 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files — never commit real credentials
+# env files - never commit real credentials
 .env
 .env.local
 .env.development.local

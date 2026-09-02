@@ -4,7 +4,7 @@
  * Every endpoint answers `{ ok: true, data }` or `{ ok: false, error }`, so
  * unwrapping it belongs in one place rather than in thirty components. A failed
  * request throws an `ApiError` carrying the message the server wrote for a
- * person, plus any per-field messages — which means a component can `catch`,
+ * person, plus any per-field messages - which means a component can `catch`,
  * hand `fieldErrors` to react-hook-form, and show the rest in a toast without
  * knowing anything about HTTP.
  */
@@ -103,7 +103,7 @@ export const api = {
  * Moves server-side field errors onto the form that produced them.
  *
  * Returns whatever could not be attached to an input, so the caller can put the
- * remainder somewhere visible instead of silently dropping it — a 422 nobody can
+ * remainder somewhere visible instead of silently dropping it - a 422 nobody can
  * see is worse than a rejected submit.
  */
 export function applyFieldErrors<T extends FieldValues>(

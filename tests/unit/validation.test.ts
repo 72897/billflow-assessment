@@ -3,7 +3,7 @@
  *
  * These run on both sides of the wire: the form uses them for inline errors, the
  * route handler re-runs them on whatever actually arrives. The tests below are
- * the second case — a hand-rolled request, not the form.
+ * the second case - a hand-rolled request, not the form.
  */
 
 import { describe, expect, it } from 'vitest'
@@ -72,7 +72,7 @@ describe('invoice schema', () => {
     expect(() => createInvoiceSchema.parse(invoicePayload({ dueDate: '2026-09-01' }))).toThrow(
       /before the issue date/i,
     )
-    // Same day is fine — due on receipt.
+    // Same day is fine - due on receipt.
     expect(createInvoiceSchema.parse(invoicePayload({ dueDate: '2026-09-02' })).dueDate).toBe('2026-09-02')
   })
 
@@ -156,7 +156,7 @@ describe('send, payment, client, auth and settings schemas', () => {
     expect(clientSchema.parse({ name: ' Priya Sharma ' }).name).toBe('Priya Sharma')
     expect(() => clientSchema.parse({ name: '' })).toThrow(/name/i)
     expect(() => clientSchema.parse({ name: 'Priya', email: 'priya at lumen' })).toThrow(/email/i)
-    // Email is optional — a walk-in client may only have a phone number.
+    // Email is optional - a walk-in client may only have a phone number.
     expect(clientSchema.parse({ name: 'Priya', email: '' }).email).toBe('')
   })
 

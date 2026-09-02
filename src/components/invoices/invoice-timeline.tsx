@@ -40,7 +40,7 @@ function num(value: unknown): number | null {
  * One event, in words a freelancer would use.
  *
  * The metadata each event carries is written by the repository that recorded it,
- * so the keys read here are the keys written there — but a row is history and
+ * so the keys read here are the keys written there - but a row is history and
  * history outlives its schema, so every read is defensive and every detail line
  * is optional. An event with metadata that no longer parses still shows its
  * title and its timestamp.
@@ -85,7 +85,7 @@ function describe(event: InvoiceEvent, currency: string): Described {
         icon: <Send />,
         title: manual ? 'Marked as sent' : again ? 'Sent again' : 'Sent to client',
         detail: manual
-          ? 'Recorded without an email — shared by link or by hand.'
+          ? 'Recorded without an email - shared by link or by hand.'
           : (to ?? undefined),
       }
     }
@@ -162,7 +162,7 @@ const TONES = {
 /**
  * What has happened to this invoice, newest first.
  *
- * This is the answer to "did they ever open it?" — the question that decides
+ * This is the answer to "did they ever open it?" - the question that decides
  * whether chasing payment means a reminder or a phone call. Every row is written
  * by the server as a side effect of the action it describes, so the feed is a
  * record rather than a reconstruction: nothing here can disagree with the

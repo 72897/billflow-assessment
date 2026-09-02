@@ -5,7 +5,7 @@
  * recorded next month still shows fresh invoices, a genuinely overdue one and a
  * payment in the current calendar month for the dashboard chart. And every total
  * is computed with the same `calculateInvoice()` the app uses, so seeded rows are
- * indistinguishable from rows a user created by hand — no hand-typed totals that
+ * indistinguishable from rows a user created by hand - no hand-typed totals that
  * could disagree with the arithmetic.
  *
  * Money is in minor units (paise), quantities in thousandths, rates in basis
@@ -81,7 +81,7 @@ export const SEED_CLIENTS: SeedClient[] = [
     email: 'ananya.rao@vervehealth.in',
     phone: '+91 90040 77219',
     address: 'Plot 22, Cyber Gateway\nHITEC City, Hyderabad 500081\nTelangana, India',
-    notes: 'Registered outside India for two entities — check GST applicability per project.',
+    notes: 'Registered outside India for two entities - check GST applicability per project.',
   },
   {
     key: 'tidal',
@@ -99,7 +99,7 @@ export const SEED_CLIENTS: SeedClient[] = [
     email: 'meera@saffronkitchen.in',
     phone: '+91 96540 88123',
     address: '7 Church Street\nFort Kochi, Kochi 682001\nKerala, India',
-    notes: 'Packaging work is seasonal — expect a burst before Onam and Diwali.',
+    notes: 'Packaging work is seasonal - expect a burst before Onam and Diwali.',
   },
   {
     key: 'oldclient',
@@ -113,14 +113,14 @@ export const SEED_CLIENTS: SeedClient[] = [
   },
 ]
 
-const TERMS = 'Payment due within 14 days of the issue date. NEFT / IMPS preferred — bank details on request.'
-const THANKS = 'Thank you for the work — it has been a genuinely good project to be part of.'
+const TERMS = 'Payment due within 14 days of the issue date. NEFT / IMPS preferred - bank details on request.'
+const THANKS = 'Thank you for the work - it has been a genuinely good project to be part of.'
 
 /**
  * A day offset landing in the middle of the *previous* calendar month.
  *
  * Plain day offsets cannot guarantee that, and the dashboard compares this month's
- * income against last month's — with nothing in last month there is no comparison
+ * income against last month's - with nothing in last month there is no comparison
  * to show, whatever date the demo is seeded on.
  */
 const MID_LAST_MONTH = (() => {
@@ -208,13 +208,13 @@ export const SEED_INVOICES: SeedInvoice[] = [
     status: 'paid',
     paid: -88,
     taxRate: 1800,
-    notes: `${TERMS}\n\nSettled a little late — no hard feelings.`,
+    notes: `${TERMS}\n\nSettled a little late - no hard feelings.`,
     method: 'card',
     views: 6,
     reminders: 1,
     remindedAt: -92,
     items: [
-      { description: 'Design retainer', detail: 'March — 40 hours', quantity: 40000, rate: 250000 },
+      { description: 'Design retainer', detail: 'March - 40 hours', quantity: 40000, rate: 250000 },
     ],
   },
   {
@@ -243,7 +243,7 @@ export const SEED_INVOICES: SeedInvoice[] = [
     status: 'sent',
     sent: -40,
     taxRate: 1800,
-    notes: `${TERMS}\n\nPO 4610-LR. Second reminder sent — please confirm the payment date.`,
+    notes: `${TERMS}\n\nPO 4610-LR. Second reminder sent - please confirm the payment date.`,
     views: 4,
     reminders: 2,
     remindedAt: -6,
@@ -266,7 +266,7 @@ export const SEED_INVOICES: SeedInvoice[] = [
     reminders: 1,
     remindedAt: -3,
     items: [
-      { description: 'Design retainer', detail: 'Monthly retainer — 32 hours', quantity: 32000, rate: 250000 },
+      { description: 'Design retainer', detail: 'Monthly retainer - 32 hours', quantity: 32000, rate: 250000 },
       { description: 'Design system upkeep', detail: 'Component library maintenance', quantity: 1000, rate: 1800000 },
     ],
   },
@@ -309,7 +309,7 @@ export const SEED_INVOICES: SeedInvoice[] = [
     discountType: 'percentage',
     discountValue: 500,
     taxRate: 1800,
-    notes: `${TERMS}\n\nPay online with the button on this page — a receipt is emailed automatically.`,
+    notes: `${TERMS}\n\nPay online with the button on this page - a receipt is emailed automatically.`,
     share: true,
     views: 3,
     items: [
@@ -336,9 +336,9 @@ export const SEED_INVOICES: SeedInvoice[] = [
     due: 13,
     status: 'draft',
     taxRate: 1800,
-    notes: `${TERMS}\n\nDraft — waiting on the final hour count for the second week.`,
+    notes: `${TERMS}\n\nDraft - waiting on the final hour count for the second week.`,
     items: [
-      { description: 'Design retainer', detail: 'This month — 24 hours', quantity: 24000, rate: 250000 },
+      { description: 'Design retainer', detail: 'This month - 24 hours', quantity: 24000, rate: 250000 },
       { description: 'Email template', detail: 'Responsive newsletter template', quantity: 1000, rate: 1600000 },
     ],
   },
@@ -348,7 +348,7 @@ export const SEED_INVOICES: SeedInvoice[] = [
     due: 14,
     status: 'draft',
     taxRate: 1800,
-    notes: 'Draft — scope still under discussion.',
+    notes: 'Draft - scope still under discussion.',
     items: [
       { description: 'Q4 brand refresh', detail: 'Discovery workshop and moodboards', quantity: 1000, rate: 8500000 },
     ],

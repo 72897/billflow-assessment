@@ -22,7 +22,7 @@ export interface FilterSelectProps {
   options: readonly FilterSelectOption[]
   /** The value that means "no filter"; it is removed from the URL rather than written. */
   neutralValue?: string
-  /** Prefix shown in the trigger — "Status", "Sort by". */
+  /** Prefix shown in the trigger - "Status", "Sort by". */
   label: string
   /** Hides the prefix on narrow screens, where there is no room for it. */
   compact?: boolean
@@ -37,7 +37,7 @@ export interface FilterSelectProps {
  * page 4 of "all invoices" is not page 4 of "overdue only".
  *
  * The neutral option is deleted from the URL instead of being written as
- * `status=all`, which keeps a default view's address clean — `/invoices` rather
+ * `status=all`, which keeps a default view's address clean - `/invoices` rather
  * than `/invoices?status=all&sort=newest`.
  */
 function FilterSelect({ param, options, neutralValue, label, compact, className }: FilterSelectProps) {

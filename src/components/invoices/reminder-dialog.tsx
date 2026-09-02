@@ -31,7 +31,7 @@ export interface ReminderDialogProps {
     clientEmail: string
     amount: number
     currency: string
-    /** "Due in 3 days" / "12 days overdue" — already worded by the caller. */
+    /** "Due in 3 days" / "12 days overdue" - already worded by the caller. */
     dueLabel: string
     reminderCount: number
   }
@@ -52,7 +52,7 @@ interface RemindResult {
  * unedited reminder is a complete reminder.
  *
  * If delivery fails the server returns the share link in `details`, and it is
- * offered here — the reminder still needs to reach the client somehow, and a
+ * offered here - the reminder still needs to reach the client somehow, and a
  * dead end is worse than a copy button.
  */
 function ReminderDialog({ open, onOpenChange, invoice }: ReminderDialogProps) {
@@ -83,7 +83,7 @@ function ReminderDialog({ open, onOpenChange, invoice }: ReminderDialogProps) {
         // A captured reminder is recorded but never left the building, so say so
         // rather than letting the count imply the client has been chased.
         description: captured
-          ? `${data.delivery.note ?? 'No email provider is configured'} — send ${invoice.invoiceNumber}'s payment link to ${data.sentTo} yourself.`
+          ? `${data.delivery.note ?? 'No email provider is configured'} - send ${invoice.invoiceNumber}'s payment link to ${data.sentTo} yourself.`
           : `${invoice.invoiceNumber} · ${data.sentTo} · ${pluralise(data.reminderCount, 'reminder')} in total`,
         duration: captured ? 12_000 : undefined,
       })
@@ -150,7 +150,7 @@ function ReminderDialog({ open, onOpenChange, invoice }: ReminderDialogProps) {
               rows={4}
               value={message}
               onChange={(event) => setMessage(event.target.value)}
-              placeholder={`Hi ${invoice.clientName.split(' ')[0] ?? 'there'}, just a gentle nudge on this one — let me know if anything needs changing.`}
+              placeholder={`Hi ${invoice.clientName.split(' ')[0] ?? 'there'}, just a gentle nudge on this one - let me know if anything needs changing.`}
             />
           </Field>
         </DialogBody>

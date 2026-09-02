@@ -37,7 +37,7 @@ export interface InvoiceActionsProps {
   invoice: InvoiceDetail
   /** For the email subject line; the document itself carries the full snapshot. */
   businessName: string
-  /** Opens the send dialog on arrival — the editor's "Save and send" lands here. */
+  /** Opens the send dialog on arrival - the editor's "Save and send" lands here. */
   autoSend?: boolean
   className?: string
 }
@@ -47,8 +47,8 @@ type Sheet = 'send' | 'payment' | 'remind' | 'delete'
 /**
  * Everything you can do to one invoice.
  *
- * The bar shows the single action that matches the invoice's state — send a
- * draft, settle a sent invoice, print a receipt for a paid one — and the rest
+ * The bar shows the single action that matches the invoice's state - send a
+ * draft, settle a sent invoice, print a receipt for a paid one - and the rest
  * live in the overflow menu. Deciding *for* the user which button is the big one
  * is the whole point: an invoice has one obvious next step at any moment.
  *

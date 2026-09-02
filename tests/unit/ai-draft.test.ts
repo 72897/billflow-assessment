@@ -1,7 +1,7 @@
 /**
  * The AI composer's deterministic half.
  *
- * The model is not exercised here — it needs a network and an API key, and a test
+ * The model is not exercised here - it needs a network and an API key, and a test
  * that depends on either is not a test. What is covered is everything that runs
  * on the answer once it arrives: the local rules parser (the fallback path, which
  * is what runs on a fresh clone with no key), and the normalisation that decides
@@ -31,7 +31,7 @@ function context(overrides: Partial<DraftContext> = {}): DraftContext {
   }
 }
 
-describe('draftFromRules — line items', () => {
+describe('draftFromRules - line items', () => {
   it('reads the canonical one-liner', () => {
     const draft = draftFromRules('website design ₹25,000 with 18% GST', context())
 
@@ -82,7 +82,7 @@ describe('draftFromRules — line items', () => {
   })
 })
 
-describe('draftFromRules — the rest of the invoice', () => {
+describe('draftFromRules - the rest of the invoice', () => {
   it('reads the whole request in one sentence', () => {
     const draft = draftFromRules(
       'create an invoice for Acme Technologies for website redesign ₹25,000 and seo setup ₹5,000, add 10% discount, 18% gst and make it due after 14 days',

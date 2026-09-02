@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
 
   return {
     title,
-    description: 'View this invoice and pay it online — no account needed.',
+    description: 'View this invoice and pay it online - no account needed.',
     // A share link is a bearer credential. Indexing one would publish it, so
     // every crawler is told to stay away and previews carry no amount.
     robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
@@ -37,11 +37,11 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
 }
 
 /**
- * Screen 17 — the public invoice.
+ * Screen 17 - the public invoice.
  *
  * No session, no sidebar, no sign-up wall: a client who has been sent a link
  * should be one tap from paying. The projection behind it carries no ids and no
- * internal history, so the token cannot be traded up into anything else — and
+ * internal history, so the token cannot be traded up into anything else - and
  * revoking it (nulling `public_token`) turns this page into a 404 with nothing
  * left to clean up.
  *
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ token: st
  *
  * There is deliberately no `loading.tsx` beside this file. A Suspense boundary
  * here would make Next flush the shell before the token has been looked up, and a
- * response whose headers have already gone out cannot be given a 404 — a dead
+ * response whose headers have already gone out cannot be given a 404 - a dead
  * share link would answer 200 to every crawler and link checker. Nothing in the
  * app client-side-navigates here (every visitor arrives from an email), so the
  * skeleton it would buy is one nobody could see.

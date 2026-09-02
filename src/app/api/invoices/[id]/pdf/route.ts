@@ -10,7 +10,7 @@ import { isValidUuid } from '@/lib/utils'
  *
  * Rendered on demand rather than stored: the file is a pure function of the
  * invoice, so there is no second copy to keep in sync and nothing to clean up
- * when a line item changes. `?download=1` switches the disposition — the same
+ * when a line item changes. `?download=1` switches the disposition - the same
  * bytes either preview in the browser's viewer or land in the downloads folder
  * (PDF-01).
  */

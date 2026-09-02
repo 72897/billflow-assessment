@@ -18,7 +18,7 @@ export interface CopyButtonProps extends Omit<ButtonProps, 'onClick' | 'children
 /**
  * Copies to the clipboard and says so on the button itself for two seconds.
  *
- * `navigator.clipboard` needs a secure context, so it is not always there — on
+ * `navigator.clipboard` needs a secure context, so it is not always there - on
  * plain HTTP the fallback selects a hidden textarea and runs `execCommand`,
  * which is deprecated but works, and failing that the user is told to copy
  * manually rather than left wondering whether the click registered.

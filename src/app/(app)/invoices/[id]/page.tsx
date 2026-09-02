@@ -25,12 +25,12 @@ const METHOD_LABELS: Record<string, string> = {
 }
 
 /**
- * Screen 11 — one invoice.
+ * Screen 11 - one invoice.
  *
  * The invoice itself is the page: the same `InvoiceDocument` the client sees on
  * the public link and the same one the PDF renders, so what is on screen is what
  * was billed. Everything around it answers the two questions that bring you here
- * — has it been paid, and has it been seen — and gives you the action that
+ * - has it been paid, and has it been seen - and gives you the action that
  * follows from the answer.
  *
  * On a phone the summary and the payment link come first, because chasing money

@@ -7,7 +7,7 @@ import { AiTransientError, AiUnavailableError, AiUnreadableError } from './groq'
  * The three cases read differently to a user, so they must not collapse into one
  * 500: "that text did not describe any work" is something they can fix, "the
  * service is busy" is worth a retry button, and "this deployment has no key" is
- * neither — it is a fact about the server, and the message says so rather than
+ * neither - it is a fact about the server, and the message says so rather than
  * blaming the input.
  */
 export function aiAppError(error: unknown): AppError {

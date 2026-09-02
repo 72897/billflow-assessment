@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card'
 import { Skeleton, SkeletonTable } from '@/components/ui/skeleton'
 
-/** Header, status tabs, filter bar, table — the four bands the real page renders. */
+/** Header, status tabs, filter bar, table - the four bands the real page renders. */
 export default function InvoicesLoading() {
   return (
     <>

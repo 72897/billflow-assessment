@@ -7,7 +7,7 @@ import { getPublicInvoiceOrThrow, recordPublicView } from '@/lib/repositories/pu
  * The invoice as an unauthenticated visitor sees it.
  *
  * No session, so the token is the whole credential and the projection is narrow
- * by construction — no ids, no user, no internal timeline. `?track=0` lets the
+ * by construction - no ids, no user, no internal timeline. `?track=0` lets the
  * page refetch after paying without logging a second view.
  */
 export const GET = route(async (request, context: RouteContext<{ token: string }>) => {

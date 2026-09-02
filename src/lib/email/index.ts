@@ -6,17 +6,17 @@
  *   - `smtp` when SMTP_USER / SMTP_PASSWORD (or EMAIL / EMAIL_PASSWORD) are set.
  *     A plain mailbox can write to any recipient, so this is the one that makes
  *     "send this invoice to my client" work for real.
- *   - `resend` when only RESEND_API_KEY is set — fine for transactional mail once
+ *   - `resend` when only RESEND_API_KEY is set - fine for transactional mail once
  *     a sending domain is verified, but an unverified account may only write to
  *     the address that owns it.
- *   - `outbox` when neither is configured — the message is written to
+ *   - `outbox` when neither is configured - the message is written to
  *     ./.mail/<timestamp>.html and its subject logged. Nothing is silently
  *     dropped, so the send and reminder flows work end to end on a machine with
  *     no email account, and the file can be opened to see exactly what the client
  *     would have received.
  *
  * The outbox is also the answer when the provider refuses a message for a reason
- * that will never change — a wrong app password, an unverified sending domain, a
+ * that will never change - a wrong app password, an unverified sending domain, a
  * Resend account still in test mode. Failing those sends would strand the user:
  * the retry button sends the identical message to the identical refusal. So a
  * permanent rejection degrades to the outbox and reports itself, while a socket
@@ -47,7 +47,7 @@ export interface EmailResult {
 }
 
 /**
- * A rejection that retrying cannot fix — a policy or configuration answer from
+ * A rejection that retrying cannot fix - a policy or configuration answer from
  * the provider rather than a bad moment.
  */
 export class PermanentEmailRejection extends Error {
@@ -75,7 +75,7 @@ function slug(value: string): string {
  * The project directory is tried first because that is where a developer will
  * look for it. On a serverless host the bundle directory is read-only, so the
  * temp directory is tried next, and if even that is refused the envelope is
- * logged and the send still reports as an outbox delivery — the invoice has been
+ * logged and the send still reports as an outbox delivery - the invoice has been
  * marked sent and the share link works, and the caller already tells the user
  * that no real email went out.
  */
@@ -92,11 +92,11 @@ async function sendViaOutbox(message: EmailMessage, note?: string): Promise<Emai
   <div><strong>To:</strong> ${escapeHtml(message.to)}</div>
   <div><strong>Subject:</strong> ${escapeHtml(message.subject)}</div>
   <div><strong>Date:</strong> ${new Date().toUTCString()}</div>
-  <div style="margin-top:8px;color:#64748b">Captured by the BillFlow outbox transport — ${escapeHtml(reason)}</div>
+  <div style="margin-top:8px;color:#64748b">Captured by the BillFlow outbox transport - ${escapeHtml(reason)}</div>
 </div>
 ${message.html}`
 
-  console.log(`[email] outbox → ${message.to} — "${message.subject}"`)
+  console.log(`[email] outbox → ${message.to} - "${message.subject}"`)
 
   for (const dir of [path.join(process.cwd(), OUTBOX_DIR), path.join(os.tmpdir(), 'billflow-mail')]) {
     try {
@@ -106,7 +106,7 @@ ${message.html}`
       console.log(`[email] written to ${file}`)
       return { transport: 'outbox', id: `outbox_${stamp}`, file, note }
     } catch {
-      // Read-only filesystem — try the next location.
+      // Read-only filesystem - try the next location.
     }
   }
 
@@ -140,7 +140,7 @@ async function sendViaResend(message: EmailMessage): Promise<EmailResult> {
  * SMTP, via nodemailer.
  *
  * A plain mailbox reaches any recipient, which a Resend account without a
- * verified domain cannot — so this is the transport that makes "send this invoice
+ * verified domain cannot - so this is the transport that makes "send this invoice
  * to my client" work for real. With Gmail the password must be an app password
  * (Google account → Security → App passwords); the account password is refused.
  *
@@ -167,7 +167,7 @@ async function sendViaSmtp(config: SmtpConfig, message: EmailMessage): Promise<E
       ...(message.replyTo ? { replyTo: message.replyTo } : {}),
     })
 
-    console.log(`[email] smtp → ${message.to} — "${message.subject}" (${info.messageId})`)
+    console.log(`[email] smtp → ${message.to} - "${message.subject}" (${info.messageId})`)
     return { transport: 'smtp', id: info.messageId || 'unknown' }
   } catch (error) {
     throw classifySmtpError(error, config)
@@ -207,10 +207,10 @@ export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
   } catch (error) {
     if (!(error instanceof PermanentEmailRejection)) throw error
 
-    // Nothing the user can do from here, and nothing a retry would change — so
+    // Nothing the user can do from here, and nothing a retry would change - so
     // capture the message and let the caller carry on, saying plainly that the
     // email did not leave.
-    console.warn(`[email] ${error.message} — falling back to the outbox`)
+    console.warn(`[email] ${error.message} - falling back to the outbox`)
     return sendViaOutbox(message, error.message)
   }
 }

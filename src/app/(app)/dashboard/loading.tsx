@@ -2,7 +2,7 @@ import { Card } from '@/components/ui/card'
 import { Skeleton, SkeletonTable } from '@/components/ui/skeleton'
 
 /**
- * The skeleton mirrors the real layout — three stat cards, a wide chart, a
+ * The skeleton mirrors the real layout - three stat cards, a wide chart, a
  * narrow panel, then a table. A placeholder with different proportions makes the
  * page jump when data arrives, which reads as a bug even though nothing is wrong.
  */

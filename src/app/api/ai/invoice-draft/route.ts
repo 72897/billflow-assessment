@@ -25,7 +25,7 @@ export const POST = route(async (request) => {
   const user = await requireUser()
 
   // A model call costs money and time, so the ceiling is lower than a normal
-  // mutation's — generous for someone drafting invoices, useless for a script.
+  // mutation's - generous for someone drafting invoices, useless for a script.
   enforceRateLimit(
     { key: `ai-draft:${user.id}`, limit: 30, windowSeconds: 300 },
     'That is a lot of drafts at once. Give it a moment and try again.',

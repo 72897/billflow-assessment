@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card'
 import { Skeleton, SkeletonTable } from '@/components/ui/skeleton'
 
-/** Header, filter bar, table — the same three bands the real page renders. */
+/** Header, filter bar, table - the same three bands the real page renders. */
 export default function ClientsLoading() {
   return (
     <>

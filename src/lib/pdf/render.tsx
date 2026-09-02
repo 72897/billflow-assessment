@@ -4,7 +4,7 @@
  * The adapters here are the only place that knows how `InvoiceDetail` (owner
  * view) and `PublicInvoice` (visitor view) differ. Both collapse to the same
  * `InvoicePdfData`, so one document definition serves the owner's download, the
- * emailed copy and the public page — a client and a freelancer looking at "the
+ * emailed copy and the public page - a client and a freelancer looking at "the
  * invoice" are always looking at the same file.
  */
 
