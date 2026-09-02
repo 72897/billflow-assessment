@@ -150,9 +150,9 @@ function buildFilters(
 
 /**
  * Everything — search, status, client, date range, sort, pagination — happens
- * in this one statement, because the brief requires filtering to be done on
- * the server and a 2 000-invoice account should not ship 2 000 rows to the
- * browser to filter three of them out.
+ * in this one statement, because filtering belongs on the server: a
+ * 2 000-invoice account should not ship 2 000 rows to the browser to filter
+ * three of them out.
  */
 export async function listInvoices(userId: string, params: InvoiceListQuery): Promise<Paginated<InvoiceListItem>> {
   const { where, values } = buildFilters(userId, params)

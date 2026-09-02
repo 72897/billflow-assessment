@@ -478,12 +478,20 @@ describe('server-side search, filter, sort and pagination', () => {
 
     expect(dashboard.recentInvoices).toHaveLength(4)
 
-    // Gap-free buckets: one point per day this month, today carrying the payment.
+    // Gap-free buckets: the default window is a rolling 30 days, with today
+    // carrying the payment.
     const todayPoint = dashboard.income.points.find((point) => point.date === today)
     expect(dashboard.income.granularity).toBe('day')
-    expect(dashboard.income.points.length).toBe(Number(today.slice(8, 10)))
+    expect(dashboard.income.points.length).toBe(30)
     expect(todayPoint?.amount).toBe(4_720_000)
     expect(dashboard.income.total).toBe(4_720_000)
+
+    // The calendar month is still one of the ranges on offer: one point per day
+    // elapsed, so on the 9th it is nine buckets wide.
+    const monthly = await getDashboardData(ownerId, 'this_month')
+    expect(monthly.income.granularity).toBe('day')
+    expect(monthly.income.points.length).toBe(Number(today.slice(8, 10)))
+    expect(monthly.income.total).toBe(4_720_000)
 
     const yearly = await getDashboardData(ownerId, 'last_12_months')
     expect(yearly.income.granularity).toBe('month')

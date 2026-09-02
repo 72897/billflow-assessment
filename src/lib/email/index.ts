@@ -11,9 +11,9 @@
  *     the address that owns it.
  *   - `outbox` when neither is configured — the message is written to
  *     ./.mail/<timestamp>.html and its subject logged. Nothing is silently
- *     dropped, so the send and reminder flows are fully demonstrable on a machine
- *     with no email account, and a reviewer can open the file to see exactly what
- *     the client would get.
+ *     dropped, so the send and reminder flows work end to end on a machine with
+ *     no email account, and the file can be opened to see exactly what the client
+ *     would have received.
  *
  * The outbox is also the answer when the provider refuses a message for a reason
  * that will never change — a wrong app password, an unverified sending domain, a

@@ -355,7 +355,7 @@ export const SEED_INVOICES: SeedInvoice[] = [
   },
 ]
 
-/** The account a reviewer signs in as. */
+/** The account the seeded data belongs to. */
 export const SEED_PROFILE = {
   fullName: 'Aarav Sharma',
   businessName: 'Aarav Sharma Design',

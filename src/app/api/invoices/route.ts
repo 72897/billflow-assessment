@@ -5,9 +5,8 @@ import { createInvoiceSchema, invoiceListQuerySchema } from '@/lib/validation/in
 
 /**
  * The invoice list. Every filter — text search, status, client, date range, sort,
- * page — is applied in one SQL statement, because the brief requires filtering on
- * the server and because an account with two thousand invoices should not ship
- * two thousand rows to the browser to display ten.
+ * page — is applied in one SQL statement, because an account with two thousand
+ * invoices should not ship two thousand rows to the browser to display ten.
  */
 export const GET = route(async (request) => {
   const user = await requireUser()

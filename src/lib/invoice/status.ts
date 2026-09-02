@@ -33,11 +33,20 @@ export interface StatusSource {
   paidAt?: string | null
 }
 
-/** `YYYY-MM-DD` for today in the viewer's local calendar. */
+/**
+ * `YYYY-MM-DD` for today, in UTC.
+ *
+ * UTC rather than the local calendar because the database is the authority on
+ * what "today" means: `invoice_display_status()` compares `due_date` against
+ * `current_date`, and every Postgres this deploys to runs in UTC. Deriving the
+ * TypeScript side from local time instead makes the two disagree for as many
+ * hours as the server is offset from UTC — an invoice that SQL calls overdue,
+ * with a "due in 0 days" caption rendered beside it.
+ */
 export function todayIsoDate(now: Date = new Date()): string {
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
+  const year = now.getUTCFullYear()
+  const month = String(now.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(now.getUTCDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
 

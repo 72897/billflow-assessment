@@ -177,8 +177,16 @@ describe('derived status', () => {
     expect(editPolicy('paid')).toBe('locked')
   })
 
-  it('reads today as a local calendar date, not a UTC instant', () => {
-    expect(todayIsoDate(new Date('2026-09-02T23:30:00'))).toBe('2026-09-02')
-    expect(todayIsoDate(new Date('2026-01-01T00:05:00'))).toBe('2026-01-01')
+  it('reads today in UTC, so it agrees with the date Postgres derives status from', () => {
+    // `invoice_display_status()` compares `due_date` against `current_date`, which
+    // is UTC on every Postgres this deploys to. Reading the TypeScript side in
+    // local time instead would make an invoice that SQL calls overdue render a
+    // "due today" caption for as long as the viewer is offset from UTC.
+    expect(todayIsoDate(new Date('2026-09-02T23:30:00Z'))).toBe('2026-09-02')
+    expect(todayIsoDate(new Date('2026-01-01T00:05:00Z'))).toBe('2026-01-01')
+    // The instant, not the wall clock, decides: half an hour before UTC midnight
+    // is still the earlier date however far ahead the machine's clock is set.
+    expect(todayIsoDate(new Date('2026-09-02T23:30:00+05:30'))).toBe('2026-09-02')
+    expect(todayIsoDate(new Date('2026-09-03T02:00:00+05:30'))).toBe('2026-09-02')
   })
 })

@@ -146,7 +146,7 @@ function labelFor(bucket: string, spec: RangeSpec): string {
  */
 export async function getIncomeSeries(
   userId: string,
-  range: IncomeRange = 'this_month',
+  range: IncomeRange = 'last_30_days',
 ): Promise<DashboardData['income']> {
   const spec = rangeSpec(range)
   // Interpolated from the whitelist above, never from request input.
@@ -226,7 +226,7 @@ export async function getNeedsAttention(userId: string, limit = 5): Promise<Need
 }
 
 /** One call for the whole dashboard screen. */
-export async function getDashboardData(userId: string, range: IncomeRange = 'this_month'): Promise<DashboardData> {
+export async function getDashboardData(userId: string, range: IncomeRange = 'last_30_days'): Promise<DashboardData> {
   const [stats, income, needsAttention, recentInvoices] = await Promise.all([
     getDashboardStats(userId),
     getIncomeSeries(userId, range),

@@ -218,10 +218,12 @@ export interface PublicPaymentResult {
 }
 
 /**
- * Simulated settlement, exactly as the brief allows: no card is charged, but
- * everything around it is real — the invoice row is locked, the payment is
- * written in the same transaction as the status change, and the idempotency key
- * makes a double-clicked Pay button a no-op (PAY-03).
+ * Settlement without a payment processor: no card is charged, but everything
+ * around it is real — the invoice row is locked, the payment is written in the
+ * same transaction as the status change, and the idempotency key makes a
+ * double-clicked Pay button a no-op (PAY-03). Dropping in Stripe or Razorpay
+ * later means calling their intent API where the card is stamped below; the
+ * locking, the ledger row and the idempotency guard already hold.
  */
 export async function payPublicInvoice(token: string, input: PublicPaymentInput): Promise<PublicPaymentResult> {
   if (!looksLikeToken(token)) throw new NotFoundError('This invoice link is no longer active.')
