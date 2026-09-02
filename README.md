@@ -54,9 +54,15 @@ with `@react-pdf/renderer`, and the on-screen invoice has its own print
 stylesheet (A4, 14 mm margins, chrome stripped) so Ctrl-P produces the same
 document.
 
-**Sending** — send by email (Resend, with a built-in file "outbox" transport as a
-fallback so the flow is demonstrable without an API key) or copy a shareable
-link. Reminders can be re-sent on overdue invoices.
+**Sending** — send by email or copy a shareable link. Email has three transports
+behind one function, picked by what is configured: SMTP (nodemailer — a plain
+mailbox, so it reaches any recipient), Resend, or a built-in file "outbox" that
+writes the message to `./.mail/*.html` so the flow is fully demonstrable with no
+email account at all. A refusal that a retry cannot fix — a wrong app password,
+an unverified sending domain — degrades to the outbox and reports why, rather
+than offering a retry button that would hit the identical refusal; a timeout or a
+rate limit still fails loudly, because there retrying is exactly right. Reminders
+can be re-sent on overdue invoices.
 
 **Public invoice page** — `/i/<token>` renders the invoice to anyone with the
 link, no account and no session. It can be paid there (simulated card / bank
@@ -116,9 +122,16 @@ and `.env.example` contains only placeholders.
 | `DATABASE_URL` | Production only | Postgres connection string. Blank locally → PGlite. |
 | `SESSION_SECRET` | Yes | 32+ random bytes. `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | `NEXT_PUBLIC_APP_URL` | Yes | Public origin used to build share links and email links. Must be the deployed origin in production, or share links will point at localhost. |
-| `RESEND_API_KEY` | No | Real email delivery. Omit and mail is written to `./.mail/*.html` and logged instead. |
-| `EMAIL_FROM` | No | Sender identity, e.g. `BillFlow <invoices@yourdomain.com>`. Must be a Resend-verified domain. |
+| `SMTP_USER` / `SMTP_PASSWORD` | No | Mailbox used to send. The recommended setup: a plain mailbox reaches any recipient. With Gmail the password must be a [16-character app password](https://myaccount.google.com/apppasswords), not the account password. `EMAIL` / `EMAIL_PASSWORD` are accepted as aliases. |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` | No | Default to `smtp.gmail.com`, `465` and implicit TLS. For port 587 set `SMTP_SECURE=false` (STARTTLS). |
+| `RESEND_API_KEY` | No | Used when no SMTP mailbox is set. An account without a verified domain may only deliver to the address that owns it — BillFlow treats that as permanent and captures to the outbox. |
+| `EMAIL_FROM` | No | Sender identity, e.g. `BillFlow <invoices@yourdomain.com>`. Under SMTP the authenticated mailbox always wins (servers reject or rewrite an address you have not signed in as), so only the display name is used. |
 | `SEED_DEMO_EMAIL` / `SEED_DEMO_PASSWORD` | No | Credentials `npm run db:seed` creates. |
+
+With none of the email variables set, nothing is lost and nothing is faked: each
+message is written to `./.mail/<timestamp>.html` with its envelope at the top, the
+subject is logged, and the UI says plainly that the invoice is sent and its
+payment link is live but no email left the building.
 
 ---
 
@@ -208,9 +221,10 @@ copy-pasteable version**; the outline is:
    connection string (the pooler resolves over IPv4; the direct
    `db.<ref>.supabase.co` host does not, which Vercel's build network needs).
 3. Set the environment variables on Vercel: `DATABASE_URL`, `SESSION_SECRET`,
-   and optionally `RESEND_API_KEY` / `EMAIL_FROM`. `NEXT_PUBLIC_APP_URL` is
-   optional on Vercel — `appUrl()` falls back to `VERCEL_PROJECT_PRODUCTION_URL`
-   so share links resolve to the deployed origin either way.
+   and — for real email — `SMTP_USER` / `SMTP_PASSWORD` (or `RESEND_API_KEY`)
+   plus `EMAIL_FROM`. `NEXT_PUBLIC_APP_URL` is optional on Vercel — `appUrl()`
+   falls back to `VERCEL_PROJECT_PRODUCTION_URL` so share links resolve to the
+   deployed origin either way.
 4. Run the migrations and seed once against the hosted database:
    ```bash
    DATABASE_URL="<session-pooler-url>" npm run db:setup

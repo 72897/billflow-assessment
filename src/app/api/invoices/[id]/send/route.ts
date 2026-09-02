@@ -61,12 +61,22 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     text,
     replyTo: invoice.business.businessEmail || undefined,
   }).catch((error: unknown) => {
-    throw new AppError('That email could not be sent. Your invoice is still a draft — you can retry, or copy the link below and send it yourself.', {
-      status: 502,
-      code: 'email_failed',
-      details: { shareUrl },
-      cause: error,
-    })
+    // Only a retryable failure reaches here — `sendEmail` absorbs the permanent
+    // ones. So the advice is "try again", and the state is left exactly as it
+    // was found, which for a first send means still a draft.
+    const unchanged =
+      invoice.status === 'draft'
+        ? 'Your invoice is still a draft'
+        : `${invoice.invoiceNumber} is unchanged`
+    throw new AppError(
+      `That email could not be sent. ${unchanged} — you can retry, or copy the link below and send it yourself.`,
+      {
+        status: 502,
+        code: 'email_failed',
+        details: { shareUrl },
+        cause: error,
+      },
+    )
   })
 
   const outcome = await markInvoiceSent(user.id, id, { to: input.to, subject: input.subject, via: 'email' })

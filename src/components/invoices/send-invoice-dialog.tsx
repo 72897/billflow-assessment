@@ -35,7 +35,7 @@ interface SendResult {
   invoice: InvoiceDetail
   shareUrl: string
   firstSend: boolean
-  delivery: { transport: 'resend' | 'outbox'; file: string | null; note: string | null }
+  delivery: { transport: 'smtp' | 'resend' | 'outbox'; file: string | null; note: string | null }
 }
 
 /**

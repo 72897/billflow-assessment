@@ -37,6 +37,13 @@ export interface ReminderDialogProps {
   }
 }
 
+interface RemindResult {
+  reminderCount: number
+  sentTo: string
+  shareUrl: string
+  delivery: { transport: 'smtp' | 'resend' | 'outbox'; file: string | null; note: string | null }
+}
+
 /**
  * Chase an unpaid invoice.
  *
@@ -67,12 +74,18 @@ function ReminderDialog({ open, onOpenChange, invoice }: ReminderDialogProps) {
     setError(null)
     setFallbackUrl(null)
     try {
-      const data = await api.post<{ reminderCount: number; sentTo: string }>(
-        `/api/invoices/${invoice.id}/remind`,
-        { message, idempotencyKey: newIdempotencyKey() },
-      )
+      const data = await api.post<RemindResult>(`/api/invoices/${invoice.id}/remind`, {
+        message,
+        idempotencyKey: newIdempotencyKey(),
+      })
+      const captured = data.delivery.transport === 'outbox'
       toast.success('Reminder sent', {
-        description: `${invoice.invoiceNumber} · ${data.sentTo} · ${pluralise(data.reminderCount, 'reminder')} in total`,
+        // A captured reminder is recorded but never left the building, so say so
+        // rather than letting the count imply the client has been chased.
+        description: captured
+          ? `${data.delivery.note ?? 'No email provider is configured'} — send ${invoice.invoiceNumber}'s payment link to ${data.sentTo} yourself.`
+          : `${invoice.invoiceNumber} · ${data.sentTo} · ${pluralise(data.reminderCount, 'reminder')} in total`,
+        duration: captured ? 12_000 : undefined,
       })
       setMessage('')
       onOpenChange(false)

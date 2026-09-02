@@ -62,7 +62,10 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     text,
     replyTo: invoice.business.businessEmail || undefined,
   }).catch((error: unknown) => {
-    throw new AppError('That reminder could not be sent. Please try again.', {
+    // As with sending, a permanent rejection never arrives here — it has already
+    // become an outbox capture. This is a bad moment, so it is worth retrying,
+    // and the reminder count is left untouched.
+    throw new AppError('That reminder could not be sent. Please try again, or copy the link below and send it yourself.', {
       status: 502,
       code: 'email_failed',
       details: { shareUrl },

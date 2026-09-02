@@ -33,15 +33,21 @@ Git will open a browser window to authenticate the first time.
 Import the repo at <https://vercel.com/new>. Vercel detects Next.js on its own,
 so leave the build and output settings untouched.
 
-Before clicking **Deploy**, open **Environment Variables** and add these four.
+Before clicking **Deploy**, open **Environment Variables** and add these five.
 Copy the values from your local `.env.local` — same file, same lines.
 
 | Name | Value |
 |---|---|
 | `DATABASE_URL` | The Supabase **session pooler** string from `.env.local`. Host must be `aws-0-ap-southeast-1.pooler.supabase.com:5432` — the direct `db.<ref>.supabase.co` host is IPv6-only and Vercel cannot reach it. |
 | `SESSION_SECRET` | The 64-character hex string from `.env.local`. |
-| `RESEND_API_KEY` | The `re_…` key from `.env.local`. |
-| `EMAIL_FROM` | `BillFlow <onboarding@resend.dev>` |
+| `SMTP_USER` | The sending mailbox from `.env.local` (`SMTP_USER`). |
+| `SMTP_PASSWORD` | The 16-character Gmail **app password** from `.env.local`. Not the account password; Gmail refuses that with `EAUTH`. |
+| `EMAIL_FROM` | `BillFlow <same-address-as-SMTP_USER>` — under SMTP only the display name is used, so the mailbox part is cosmetic. |
+
+`SMTP_HOST` and `SMTP_PORT` can be left out — they default to `smtp.gmail.com`
+and `465`. `RESEND_API_KEY` is not needed either: SMTP takes priority, and a
+Resend account without a verified sending domain can only deliver to its own
+owner, which is why SMTP is the transport here.
 
 Apply each to **Production, Preview and Development**. Then **Deploy**.
 
@@ -118,8 +124,12 @@ DATABASE_URL="<connection-string>" npm run db:optional
 
 ## 5 — After the review, rotate these
 
-Both passed through an AI chat session, so treat them as disclosed:
+All of these passed through an AI chat session, so treat them as disclosed:
 
+- The **Gmail app password** used for `SMTP_PASSWORD` —
+  <https://myaccount.google.com/apppasswords> → delete the BillFlow entry and
+  generate a new one. This is the one that matters most: an app password can send
+  mail as the account. Deleting it does not affect the Google account password.
 - The Supabase **service-role** key (`sb_secret_…`) — Supabase dashboard →
   Project Settings → API → *Rotate*. BillFlow never uses it; it connects with
   the pooled Postgres password only.

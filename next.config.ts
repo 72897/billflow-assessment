@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // These packages must stay outside the bundler: they rely on Node built-ins
   // (fs / WASM loading) that webpack cannot statically analyse.
-  serverExternalPackages: ['@electric-sql/pglite', 'pg', '@react-pdf/renderer'],
+  serverExternalPackages: ['@electric-sql/pglite', 'pg', '@react-pdf/renderer', 'nodemailer'],
   eslint: {
     // Lint is run explicitly via `npm run lint`; a lint warning should not fail a build.
     ignoreDuringBuilds: true,

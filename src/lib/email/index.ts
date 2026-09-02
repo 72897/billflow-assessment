@@ -1,27 +1,33 @@
 /**
  * Outgoing email.
  *
- * Two transports behind one function:
+ * Three transports behind one function, picked in this order:
  *
- *   - `resend` when RESEND_API_KEY is set — real delivery.
- *   - `outbox` otherwise — the message is written to ./.mail/<timestamp>.html
- *     and its subject logged. Nothing is silently dropped, so the send and
- *     reminder flows are fully demonstrable on a machine with no email account,
- *     and a reviewer can open the file to see exactly what the client would get.
+ *   - `smtp` when SMTP_USER / SMTP_PASSWORD (or EMAIL / EMAIL_PASSWORD) are set.
+ *     A plain mailbox can write to any recipient, so this is the one that makes
+ *     "send this invoice to my client" work for real.
+ *   - `resend` when only RESEND_API_KEY is set — fine for transactional mail once
+ *     a sending domain is verified, but an unverified account may only write to
+ *     the address that owns it.
+ *   - `outbox` when neither is configured — the message is written to
+ *     ./.mail/<timestamp>.html and its subject logged. Nothing is silently
+ *     dropped, so the send and reminder flows are fully demonstrable on a machine
+ *     with no email account, and a reviewer can open the file to see exactly what
+ *     the client would get.
  *
  * The outbox is also the answer when the provider refuses a message for a reason
- * that will never change — a Resend account still in test mode may only write to
- * the address that owns it, and an unverified sending domain is rejected the same
- * way every time. Failing those sends would strand the user: the retry button
- * sends the identical message to the identical refusal. So a permanent rejection
- * degrades to the outbox and reports itself, while a rate limit or a provider
- * outage still fails loudly, because there retrying is exactly right.
+ * that will never change — a wrong app password, an unverified sending domain, a
+ * Resend account still in test mode. Failing those sends would strand the user:
+ * the retry button sends the identical message to the identical refusal. So a
+ * permanent rejection degrades to the outbox and reports itself, while a socket
+ * error, a timeout or a rate limit still fails loudly, because there retrying is
+ * exactly right.
  */
 
 import { mkdir, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { emailFrom, hasEmailProvider } from '@/lib/config'
+import { emailFrom, hasEmailProvider, smtpConfig, type SmtpConfig } from '@/lib/config'
 
 export interface EmailMessage {
   to: string
@@ -32,7 +38,7 @@ export interface EmailMessage {
 }
 
 export interface EmailResult {
-  transport: 'resend' | 'outbox'
+  transport: 'smtp' | 'resend' | 'outbox'
   id: string
   /** Where an outbox message landed, so the UI can tell the user. */
   file?: string
@@ -130,11 +136,74 @@ async function sendViaResend(message: EmailMessage): Promise<EmailResult> {
   return { transport: 'resend', id: data?.id ?? 'unknown' }
 }
 
-export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
-  if (!hasEmailProvider()) return sendViaOutbox(message)
+/**
+ * SMTP, via nodemailer.
+ *
+ * A plain mailbox reaches any recipient, which a Resend account without a
+ * verified domain cannot — so this is the transport that makes "send this invoice
+ * to my client" work for real. With Gmail the password must be an app password
+ * (Google account → Security → App passwords); the account password is refused.
+ *
+ * The connection is not pooled. A send is rare and interactive, and on a
+ * serverless host a pooled socket would be torn down between invocations anyway.
+ */
+async function sendViaSmtp(config: SmtpConfig, message: EmailMessage): Promise<EmailResult> {
+  const nodemailer = await import('nodemailer')
+
+  const transporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: { user: config.user, pass: config.password },
+  })
 
   try {
-    return await sendViaResend(message)
+    const info = await transporter.sendMail({
+      from: emailFrom(),
+      to: message.to,
+      subject: message.subject,
+      html: message.html,
+      text: message.text,
+      ...(message.replyTo ? { replyTo: message.replyTo } : {}),
+    })
+
+    console.log(`[email] smtp → ${message.to} — "${message.subject}" (${info.messageId})`)
+    return { transport: 'smtp', id: info.messageId || 'unknown' }
+  } catch (error) {
+    throw classifySmtpError(error, config)
+  } finally {
+    transporter.close()
+  }
+}
+
+/**
+ * A wrong app password or a refused recipient will be refused identically for
+ * ever; a closed socket or a timeout is worth another go. nodemailer reports the
+ * first kind as an `EAUTH`/`EENVELOPE` code or a 5xx reply, and the second as a
+ * socket-level code or a 4xx reply.
+ */
+function classifySmtpError(error: unknown, config: SmtpConfig): Error {
+  const raw = error instanceof Error ? error.message : String(error)
+  const code = (error as { code?: string } | null)?.code ?? ''
+  const replyCode = (error as { responseCode?: number } | null)?.responseCode ?? 0
+
+  if (code === 'EAUTH' || replyCode === 535 || replyCode === 534) {
+    return new PermanentEmailRejection(
+      `${config.host} refused the login for ${config.user}. With Gmail this must be a 16-character app password, not the account password.`,
+    )
+  }
+  if (code === 'EENVELOPE' || (replyCode >= 500 && replyCode < 600)) {
+    return new PermanentEmailRejection(`${config.host} rejected the message: ${raw}`)
+  }
+  return new Error(`${config.host} could not be reached: ${raw}`)
+}
+
+export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
+  const smtp = smtpConfig()
+  if (!smtp && !hasEmailProvider()) return sendViaOutbox(message)
+
+  try {
+    return smtp ? await sendViaSmtp(smtp, message) : await sendViaResend(message)
   } catch (error) {
     if (!(error instanceof PermanentEmailRejection)) throw error
 
