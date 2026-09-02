@@ -9,9 +9,13 @@
  *     reminder flows are fully demonstrable on a machine with no email account,
  *     and a reviewer can open the file to see exactly what the client would get.
  *
- * A failed send is reported, never swallowed: the caller decides whether that
- * should fail the request (it does for "send invoice", because the user is
- * waiting to hear that their client got it).
+ * The outbox is also the answer when the provider refuses a message for a reason
+ * that will never change — a Resend account still in test mode may only write to
+ * the address that owns it, and an unverified sending domain is rejected the same
+ * way every time. Failing those sends would strand the user: the retry button
+ * sends the identical message to the identical refusal. So a permanent rejection
+ * degrades to the outbox and reports itself, while a rate limit or a provider
+ * outage still fails loudly, because there retrying is exactly right.
  */
 
 import { mkdir, writeFile } from 'node:fs/promises'
@@ -32,7 +36,20 @@ export interface EmailResult {
   id: string
   /** Where an outbox message landed, so the UI can tell the user. */
   file?: string
+  /** Why this went to the outbox, when it was not simply a missing API key. */
+  note?: string
 }
+
+/**
+ * A rejection that retrying cannot fix — a policy or configuration answer from
+ * the provider rather than a bad moment.
+ */
+export class PermanentEmailRejection extends Error {
+  readonly name = 'PermanentEmailRejection'
+}
+
+/** Rejections that are worth retrying, so they must not become an outbox write. */
+const TRANSIENT = /rate.?limit|too many|timed? ?out|temporar|unavailable|internal (server )?error|try again/i
 
 const OUTBOX_DIR = '.mail'
 
@@ -56,9 +73,10 @@ function slug(value: string): string {
  * marked sent and the share link works, and the caller already tells the user
  * that no real email went out.
  */
-async function sendViaOutbox(message: EmailMessage): Promise<EmailResult> {
+async function sendViaOutbox(message: EmailMessage, note?: string): Promise<EmailResult> {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-')
   const name = `${stamp}-${slug(message.subject) || 'message'}.html`
+  const reason = note ?? 'RESEND_API_KEY is not set, so nothing was delivered.'
 
   const envelope = `<!doctype html>
 <meta charset="utf-8">
@@ -68,7 +86,7 @@ async function sendViaOutbox(message: EmailMessage): Promise<EmailResult> {
   <div><strong>To:</strong> ${escapeHtml(message.to)}</div>
   <div><strong>Subject:</strong> ${escapeHtml(message.subject)}</div>
   <div><strong>Date:</strong> ${new Date().toUTCString()}</div>
-  <div style="margin-top:8px;color:#64748b">Captured by the BillFlow outbox transport — RESEND_API_KEY is not set, so nothing was delivered.</div>
+  <div style="margin-top:8px;color:#64748b">Captured by the BillFlow outbox transport — ${escapeHtml(reason)}</div>
 </div>
 ${message.html}`
 
@@ -80,14 +98,14 @@ ${message.html}`
       await mkdir(dir, { recursive: true })
       await writeFile(file, envelope, 'utf8')
       console.log(`[email] written to ${file}`)
-      return { transport: 'outbox', id: `outbox_${stamp}`, file }
+      return { transport: 'outbox', id: `outbox_${stamp}`, file, note }
     } catch {
       // Read-only filesystem — try the next location.
     }
   }
 
   console.log('[email] nowhere writable; envelope not persisted')
-  return { transport: 'outbox', id: `outbox_${stamp}` }
+  return { transport: 'outbox', id: `outbox_${stamp}`, note }
 }
 
 async function sendViaResend(message: EmailMessage): Promise<EmailResult> {
@@ -104,14 +122,28 @@ async function sendViaResend(message: EmailMessage): Promise<EmailResult> {
   })
 
   if (error) {
-    throw new Error(`Resend rejected the message: ${error.message}`)
+    // Resend answers a policy or configuration problem with an `error` object
+    // rather than by throwing, and those answers do not change on a retry.
+    const detail = `Resend rejected the message: ${error.message}`
+    throw TRANSIENT.test(error.message) ? new Error(detail) : new PermanentEmailRejection(detail)
   }
   return { transport: 'resend', id: data?.id ?? 'unknown' }
 }
 
 export async function sendEmail(message: EmailMessage): Promise<EmailResult> {
   if (!hasEmailProvider()) return sendViaOutbox(message)
-  return sendViaResend(message)
+
+  try {
+    return await sendViaResend(message)
+  } catch (error) {
+    if (!(error instanceof PermanentEmailRejection)) throw error
+
+    // Nothing the user can do from here, and nothing a retry would change — so
+    // capture the message and let the caller carry on, saying plainly that the
+    // email did not leave.
+    console.warn(`[email] ${error.message} — falling back to the outbox`)
+    return sendViaOutbox(message, error.message)
+  }
 }
 
 export function escapeHtml(value: string): string {

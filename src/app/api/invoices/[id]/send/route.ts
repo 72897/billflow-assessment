@@ -14,9 +14,15 @@ import { sendInvoiceSchema } from '@/lib/validation/invoice'
  * Sends an invoice by email.
  *
  * The order of operations is the point: the share link is minted and the message
- * is delivered *before* the invoice is marked sent. If the provider rejects the
- * message, the invoice stays a draft and the user is told — rather than seeing a
- * "Sent" badge for an email that never left.
+ * is delivered *before* the invoice is marked sent. If the provider fails in a way
+ * a retry could fix, the invoice stays a draft and the user is told — rather than
+ * seeing a "Sent" badge for an email that never left.
+ *
+ * A permanent rejection (a test-mode Resend account, an unverified sending
+ * domain) is handled inside `sendEmail`, which captures the message to the outbox
+ * and says so. The invoice is marked sent in that case, because the share link it
+ * minted is live and payable — and `delivery.note` carries the reason to the UI so
+ * nobody is told an email arrived when it did not.
  */
 export const POST = route(async (request, context: RouteContext<{ id: string }>) => {
   const user = await requireUser()
@@ -55,7 +61,7 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     text,
     replyTo: invoice.business.businessEmail || undefined,
   }).catch((error: unknown) => {
-    throw new AppError('That email could not be sent. Your invoice is still a draft — please try again.', {
+    throw new AppError('That email could not be sent. Your invoice is still a draft — you can retry, or copy the link below and send it yourself.', {
       status: 502,
       code: 'email_failed',
       details: { shareUrl },
@@ -69,6 +75,6 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     invoice: await getInvoiceOrThrow(user.id, id),
     shareUrl,
     firstSend: outcome.firstSend,
-    delivery: { transport: delivery.transport, file: delivery.file ?? null },
+    delivery: { transport: delivery.transport, file: delivery.file ?? null, note: delivery.note ?? null },
   })
 })

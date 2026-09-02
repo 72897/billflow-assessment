@@ -35,7 +35,7 @@ interface SendResult {
   invoice: InvoiceDetail
   shareUrl: string
   firstSend: boolean
-  delivery: { transport: 'resend' | 'outbox'; file: string | null }
+  delivery: { transport: 'resend' | 'outbox'; file: string | null; note: string | null }
 }
 
 /**
@@ -88,11 +88,12 @@ function SendInvoiceDialog({ open, onOpenChange, invoice }: SendInvoiceDialogPro
 
       toast.success(data.firstSend ? `${invoice.invoiceNumber} sent` : `${invoice.invoiceNumber} sent again`, {
         // The outbox transport is not a failure, but pretending an email left
-        // when RESEND_API_KEY is unset would be — so say where it went instead.
+        // when it did not would be — so say where it went, and why, instead.
         description:
           data.delivery.transport === 'outbox'
-            ? `No email provider is configured, so the message was saved to ${data.delivery.file ?? 'the outbox'}.`
+            ? `${data.delivery.note ?? 'No email provider is configured'} — the invoice is sent and its payment link is live, so copy the link to the client yourself.`
             : `${to} should have it in a moment.`,
+        duration: data.delivery.transport === 'outbox' ? 12_000 : undefined,
       })
       setMessage('')
       onOpenChange(false)

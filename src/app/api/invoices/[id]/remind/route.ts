@@ -77,6 +77,6 @@ export const POST = route(async (request, context: RouteContext<{ id: string }>)
     shareUrl,
     reminderCount: outcome.reminderCount,
     sentTo: invoice.client.email,
-    delivery: { transport: delivery.transport, file: delivery.file ?? null },
+    delivery: { transport: delivery.transport, file: delivery.file ?? null, note: delivery.note ?? null },
   })
 })
