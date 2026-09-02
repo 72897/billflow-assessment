@@ -55,10 +55,10 @@ const METHODS: Array<{ value: Method; title: string; description: string; icon: 
  * Screen 18 — the payment sheet on the public link.
  *
  * There is no card form, and that is the honest design rather than a shortcut:
- * this is a simulated gateway, so asking for a card number would be collecting
- * something we have no business holding. The disclosure says so in plain words,
- * because a client who thinks they have really paid an invoice they have not is
- * the worst outcome this screen can produce.
+ * settlement here does not run through a processor, so asking for a card number
+ * would be collecting something this app has no business holding. The disclosure
+ * says so in plain words, because a client who believes they have paid an invoice
+ * they have not is the worst outcome this screen can produce.
  *
  * The parts that would matter with a real processor are all real: the total is
  * echoed back and rejected if it moved (PAY-05), one idempotency key is minted
@@ -168,8 +168,8 @@ function PaymentDialog({
           <p className="flex items-start gap-2 rounded-md border border-border bg-muted/50 px-3 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
             <Lock className="mt-px size-3.5 shrink-0" aria-hidden />
             <span>
-              This is a demonstration payment. No card details are collected and no money moves — the invoice is simply
-              marked as paid and a receipt is issued.
+              No card details are collected or stored. Confirming records the payment against this invoice and emails a
+              receipt to the address above.
             </span>
           </p>
         </DialogBody>

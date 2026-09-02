@@ -8,52 +8,69 @@
  * Every colour the app uses is declared here as HSL channels and consumed
  * through `tailwind.config.ts`, so a shade is never hard-coded in a component
  * and the whole palette can be retuned from one file.
+ *
+ * The palette is deliberately small: one neutral ramp, one accent, and four
+ * status hues that only ever appear on a badge, a dot or a number. Everything
+ * structural — surfaces, borders, text — is the same near-neutral slate at low
+ * saturation, which is what stops a dense screen from looking like a toy.
  */
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 210 20% 98%;
+    --foreground: 222 24% 12%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 222 24% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 222 24% 12%;
 
-    --primary: 243 75% 59%;
-    --primary-hover: 245 58% 51%;
+    --primary: 240 68% 56%;
+    --primary-hover: 242 60% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 210 22% 96.5%;
+    --secondary-foreground: 222 24% 12%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 210 22% 96.5%;
+    --muted-foreground: 215 14% 44%;
 
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 210 22% 96.5%;
+    --accent-foreground: 222 24% 12%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 66% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 243 75% 59%;
+    --border: 214 22% 91%;
+    --border-strong: 214 20% 83%;
+    --input: 214 20% 88%;
+    --ring: 240 68% 56%;
 
-    --success: 158 64% 32%;
+    /* Status. Each is a text colour, a wash and a hairline — never a fill. */
+    --info: 213 82% 42%;
+    --info-foreground: 0 0% 100%;
+    --info-subtle: 213 100% 97%;
+    --info-border: 213 90% 88%;
+
+    --success: 158 64% 30%;
     --success-foreground: 0 0% 100%;
-    --success-subtle: 152 81% 96%;
-    --success-border: 152 76% 80%;
+    --success-subtle: 152 60% 96%;
+    --success-border: 152 50% 82%;
 
-    --warning: 26 90% 37%;
+    --warning: 26 84% 35%;
     --warning-foreground: 0 0% 100%;
-    --warning-subtle: 48 100% 96%;
-    --warning-border: 48 96% 77%;
+    --warning-subtle: 44 92% 95%;
+    --warning-border: 44 80% 80%;
 
-    --danger: 0 74% 42%;
+    --danger: 0 68% 42%;
     --danger-foreground: 0 0% 100%;
-    --danger-subtle: 0 86% 97%;
-    --danger-border: 0 96% 89%;
+    --danger-subtle: 0 78% 97%;
+    --danger-border: 0 74% 89%;
+
+    /* Motion. One easing for anything that enters, one for state changes, so
+     * the whole app accelerates and settles the same way. */
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   }
 
   * {
@@ -74,9 +91,59 @@
     font-variant-numeric: tabular-nums;
   }
 
+  ::selection {
+    background-color: hsl(var(--primary) / 0.16);
+  }
+
+  /**
+   * A quiet scrollbar. The platform default is 17px of grey chrome down the side
+   * of every card, which is the fastest way to make a considered layout look
+   * unfinished. `.scrollbar-none` still wins where a bar reads as a bug.
+   */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(214 15% 82%) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+    background-color: hsl(214 15% 82%);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(214 12% 68%);
+  }
+
   /* Only show focus rings for keyboard users, never on a mouse click. */
   :focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-ring/70 ring-offset-2 ring-offset-background;
+  }
+
+  /**
+   * Every transition and animation in the app is decoration over a layout that
+   * already works, so a visitor who has asked for less motion loses nothing by
+   * having all of it removed.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -97,6 +164,35 @@
     100% {
       transform: translateX(100%);
     }
+  }
+
+  /**
+   * Screen content settles in rather than appearing. 200ms and 4px — enough to
+   * read as a page arriving, short enough that a fast navigation never feels
+   * like it is waiting for an animation.
+   */
+  .page-enter {
+    animation: page-enter 200ms var(--ease-out) both;
+  }
+
+  @keyframes page-enter {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  /**
+   * A surface that responds to the pointer: the border firms up, the shadow
+   * deepens, and the whole card rises by a single pixel. One pixel is the point
+   * — anything more and a grid of cards starts bouncing.
+   */
+  .surface-interactive {
+    @apply transition-[transform,box-shadow,border-color] duration-150 ease-out-quint;
+  }
+
+  .surface-interactive:hover {
+    @apply -translate-y-px border-border-strong shadow-lift;
   }
 
   /* Filter strips scroll sideways on a phone; a visible bar there reads as a bug. */

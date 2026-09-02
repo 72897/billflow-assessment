@@ -3,8 +3,14 @@
 import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
+/**
+ * The shared field shell, also used by the search box and the select triggers so
+ * every input in the app is the same height and lights up the same way. The
+ * border firms up on hover and takes the accent on focus, with a soft ring
+ * rather than the browser's hard outline.
+ */
 export const inputBase =
-  'flex h-9 w-full rounded-md border border-input bg-card px-3 py-1.5 text-sm text-foreground shadow-xs transition-colors placeholder:text-muted-foreground/70 focus-visible:border-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/25 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground'
+  'flex h-9 w-full rounded-md border border-input bg-card px-3 py-1.5 text-sm text-foreground shadow-xs transition-[border-color,box-shadow,background-color] duration-150 placeholder:text-muted-foreground/70 hover:border-border-strong focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/20 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none disabled:hover:border-input'
 
 // `prefix` is omitted from the DOM attributes deliberately: HTML has a global
 // `prefix` attribute typed as a string, and this one takes a node.
@@ -45,7 +51,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           inputBase,
           'items-center gap-1.5 py-0',
           invalid && 'border-danger-border focus-within:border-danger focus-within:ring-danger/20',
-          'focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/25',
+          'focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/20',
         )}
       >
         {prefix ? <span className="shrink-0 select-none text-sm text-muted-foreground">{prefix}</span> : null}

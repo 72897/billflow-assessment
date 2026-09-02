@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { Card, CardHeaderRow, CardTitle } from '@/components/ui/card'
 import { ErrorState } from '@/components/ui/error-state'
@@ -10,17 +10,61 @@ import { formatCompactAmount, formatMoney } from '@/lib/money'
 import type { DashboardData, IncomeRange } from '@/types'
 
 const RANGE_LABELS: Record<IncomeRange, string> = {
-  this_month: 'This month',
   last_30_days: 'Last 30 days',
+  this_month: 'This month',
   this_year: 'This year',
   last_12_months: 'Last 12 months',
 }
 
 const RANGES = Object.keys(RANGE_LABELS) as IncomeRange[]
 
+/**
+ * Recharts writes these onto SVG presentation attributes, which do not resolve
+ * `var()` reliably across browsers — so they are the only literals in the app,
+ * and they mirror `--primary`, `--border` and `--muted-foreground` exactly.
+ */
+const CHART = {
+  accent: 'hsl(240 68% 56%)',
+  grid: 'hsl(214 22% 91%)',
+  tick: 'hsl(215 14% 44%)',
+  surface: 'hsl(0 0% 100%)',
+} as const
+
 interface TooltipPayload {
   active?: boolean
   payload?: Array<{ payload: { label: string; amount: number } }>
+}
+
+interface DotProps {
+  cx?: number
+  cy?: number
+  index?: number
+  payload?: { amount: number }
+}
+
+/**
+ * A marker on the days that carry a payment, and nothing on the days that do not.
+ *
+ * Freelance income is spiky by nature — a handful of invoices clear in a month,
+ * not a little every day — so over a 30-day window most points sit on the
+ * baseline. Drawing every dot turns that into a row of 30 beads along the
+ * bottom; drawing none (the Recharts default) leaves the few real payments as
+ * hairline spikes that read as an empty chart. Marking only the non-zero days
+ * says "three payments landed, here" at a glance.
+ */
+function IncomeDot({ cx, cy, index, payload }: DotProps) {
+  if (cx == null || cy == null || !payload || payload.amount <= 0) return <g key={index} />
+  return (
+    <circle
+      key={index}
+      cx={cx}
+      cy={cy}
+      r={3.5}
+      fill={CHART.surface}
+      stroke={CHART.accent}
+      strokeWidth={2}
+    />
+  )
 }
 
 function ChartTooltip({ active, payload, currency }: TooltipPayload & { currency: string }) {
@@ -54,6 +98,22 @@ function IncomeChart({ income: initial, currency }: IncomeChartProps) {
   const [range, setRange] = useState<IncomeRange>(initial.range)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<unknown>(null)
+
+  /**
+   * The plot is drawn after mount, never during hydration.
+   *
+   * Recharts sizes itself by measuring its container, which on the server is
+   * zero-by-zero — so the SVG it renders into the HTML is not the SVG it renders
+   * once the browser has a real width, and React 19 treats that as a failed
+   * hydration and tears the subtree out. (It surfaces as a blank card and a
+   * minified error #418 in the console.) Gating on mount means the first client
+   * render *is* the first render of the chart, so there is nothing to mismatch.
+   *
+   * Nothing is lost by keeping it out of the server HTML: the plot is
+   * `aria-hidden` and the sentence below carries the same information.
+   */
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   async function changeRange(next: string) {
     const nextRange = next as IncomeRange
@@ -111,42 +171,55 @@ function IncomeChart({ income: initial, currency }: IncomeChartProps) {
           ) : null}
 
           <div className="h-[220px] w-full sm:h-[248px]" aria-hidden>
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={income.points} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="incomeFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(243 75% 59%)" stopOpacity={0.18} />
-                    <stop offset="100%" stopColor="hsl(243 75% 59%)" stopOpacity={0.01} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="hsl(214 32% 91%)" strokeDasharray="3 3" vertical={false} />
-                <XAxis
-                  dataKey="label"
-                  tickLine={false}
-                  axisLine={false}
-                  interval="preserveStartEnd"
-                  minTickGap={18}
-                  tick={{ fontSize: 11, fill: 'hsl(215 16% 47%)' }}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  width={48}
-                  tickFormatter={(value: number) => formatCompactAmount(value)}
-                  tick={{ fontSize: 11, fill: 'hsl(215 16% 47%)' }}
-                />
-                <Tooltip content={<ChartTooltip currency={currency} />} cursor={{ stroke: 'hsl(214 32% 91%)' }} />
-                <Area
-                  type="monotone"
-                  dataKey="amount"
-                  stroke="hsl(243 75% 59%)"
-                  strokeWidth={2}
-                  fill="url(#incomeFill)"
-                  dot={false}
-                  activeDot={{ r: 4, strokeWidth: 2, stroke: '#fff' }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={income.points} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="incomeFill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={CHART.accent} stopOpacity={0.18} />
+                      <stop offset="100%" stopColor={CHART.accent} stopOpacity={0.01} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke={CHART.grid} strokeDasharray="3 3" vertical={false} />
+                  <XAxis
+                    dataKey="label"
+                    tickLine={false}
+                    axisLine={false}
+                    interval="preserveStartEnd"
+                    minTickGap={18}
+                    tick={{ fontSize: 11, fill: CHART.tick }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    width={48}
+                    tickFormatter={(value: number) => formatCompactAmount(value)}
+                    tick={{ fontSize: 11, fill: CHART.tick }}
+                  />
+                  <Tooltip content={<ChartTooltip currency={currency} />} cursor={{ stroke: CHART.grid }} />
+                  <Area
+                    type="monotone"
+                    dataKey="amount"
+                    stroke={CHART.accent}
+                    strokeWidth={2}
+                    fill="url(#incomeFill)"
+                    /*
+                     * No entry animation. Recharts withholds the dots until the
+                     * sweep finishes, so an animated chart spends its first 1.5s
+                     * showing a line with no markers on it — and a dashboard that
+                     * redraws itself every time the range changes reads as slow
+                     * rather than lively.
+                     */
+                    isAnimationActive={false}
+                    dot={<IncomeDot />}
+                    activeDot={{ r: 4, strokeWidth: 2, stroke: CHART.surface }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              /* Holds the height the plot will take, so the card does not jump. */
+              <div className="h-full w-full animate-pulse rounded-md bg-secondary/60" />
+            )}
           </div>
 
           {/*

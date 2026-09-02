@@ -9,7 +9,7 @@ const badgeVariants = cva(
       tone: {
         neutral: 'border-border bg-muted text-muted-foreground',
         primary: 'border-primary/20 bg-primary/10 text-primary',
-        info: 'border-blue-200 bg-blue-50 text-blue-700',
+        info: 'border-info-border bg-info-subtle text-info',
         success: 'border-success-border bg-success-subtle text-success',
         warning: 'border-warning-border bg-warning-subtle text-warning',
         danger: 'border-danger-border bg-danger-subtle text-danger',
@@ -38,11 +38,17 @@ const STATUS_TONE: Record<DisplayStatus, NonNullable<BadgeProps['tone']>> = {
   overdue: 'danger',
 }
 
+/**
+ * The dot is the saturated version of the pill's own hue, which is the only
+ * place a status colour appears at full strength. Everything else — the wash,
+ * the hairline, the label — is dialled back, so a list of thirty invoices reads
+ * as one page rather than four competing colours.
+ */
 const STATUS_DOT: Record<DisplayStatus, string> = {
-  draft: 'bg-slate-400',
-  sent: 'bg-blue-500',
-  paid: 'bg-emerald-500',
-  overdue: 'bg-red-500',
+  draft: 'bg-muted-foreground/55',
+  sent: 'bg-info',
+  paid: 'bg-success',
+  overdue: 'bg-danger',
 }
 
 export interface StatusPillProps extends Omit<BadgeProps, 'tone' | 'children'> {

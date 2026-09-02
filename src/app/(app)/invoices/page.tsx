@@ -33,10 +33,10 @@ const SORT_OPTIONS = [
  * Screen 8 — the invoice list.
  *
  * Search, status, client, sort and pagination are all resolved in one SQL
- * statement, which the brief asks for explicitly: a large account must not ship
- * every invoice to the browser so the browser can hide most of them. Every filter
- * lives in the URL, so a filtered view can be bookmarked, shared and reloaded, and
- * the back button undoes a filter the way it should.
+ * statement, deliberately: a large account must not ship every invoice to the
+ * browser so the browser can hide most of them. Every filter lives in the URL, so
+ * a filtered view can be bookmarked, shared and reloaded, and the back button
+ * undoes a filter the way it should.
  */
 export default async function InvoicesPage({ searchParams }: { searchParams: Promise<RawSearchParams> }) {
   const user = await requireUserPage('/invoices')
@@ -169,7 +169,7 @@ export default async function InvoicesPage({ searchParams }: { searchParams: Pro
               />
             ) : (
               <>
-                <InvoiceTable invoices={page.rows} />
+                <InvoiceTable invoices={page.rows} sortable />
                 <Pagination
                   page={page.page}
                   perPage={page.perPage}

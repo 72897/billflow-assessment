@@ -44,13 +44,26 @@ function Sidebar({ user, businessName }: { user: SessionUser; businessName: stri
               href={item.href}
               aria-current={active ? 'page' : undefined}
               className={cn(
-                'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                'group relative flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-[background-color,color] duration-150',
                 active
                   ? 'bg-primary/[0.07] text-primary'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground active:bg-muted',
               )}
             >
-              <item.icon className={cn('size-[18px] shrink-0', active ? 'text-primary' : 'text-muted-foreground')} />
+              {/* A hairline flush to the rail's edge. The tinted pill alone reads
+                  as a hover state; the bar is what says "you are here". */}
+              {active ? (
+                <span
+                  className="absolute -left-3 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
+                  aria-hidden
+                />
+              ) : null}
+              <item.icon
+                className={cn(
+                  'size-[18px] shrink-0 transition-colors duration-150',
+                  active ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground',
+                )}
+              />
               {item.label}
             </Link>
           )

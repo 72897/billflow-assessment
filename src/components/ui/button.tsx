@@ -6,18 +6,30 @@ import { Loader2 } from 'lucide-react'
 import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
+/**
+ * Buttons press.
+ *
+ * A single pixel of downward travel on `:active`, plus a shadow that deepens on
+ * hover and flattens on the press, is what separates a button that feels
+ * connected to the pointer from a rectangle that changes colour. The transition
+ * lists its properties rather than using `transition-all`, so a width change
+ * from a loading label never animates.
+ */
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-[background-color,border-color,color,box-shadow,transform,opacity] duration-150 ease-out-quint active:translate-y-px disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        primary: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary-hover',
-        secondary: 'border border-border bg-card text-foreground shadow-xs hover:bg-muted',
-        ghost: 'text-muted-foreground hover:bg-muted hover:text-foreground',
-        danger: 'bg-destructive text-destructive-foreground shadow-xs hover:brightness-95',
-        'danger-outline': 'border border-danger-border bg-danger-subtle text-danger hover:bg-danger-subtle/70',
-        success: 'bg-success text-success-foreground shadow-xs hover:brightness-110',
-        link: 'text-primary underline-offset-4 hover:underline',
+        primary:
+          'bg-primary text-primary-foreground shadow-xs hover:bg-primary-hover hover:shadow-card active:shadow-none',
+        secondary:
+          'border border-border bg-card text-foreground shadow-xs hover:border-border-strong hover:bg-secondary active:bg-muted active:shadow-none',
+        ghost: 'text-muted-foreground hover:bg-muted hover:text-foreground active:bg-border/50',
+        danger: 'bg-destructive text-destructive-foreground shadow-xs hover:brightness-95 hover:shadow-card active:shadow-none',
+        'danger-outline':
+          'border border-danger-border bg-danger-subtle text-danger hover:border-danger/40 hover:bg-danger-subtle/70',
+        success: 'bg-success text-success-foreground shadow-xs hover:brightness-110 hover:shadow-card active:shadow-none',
+        link: 'text-primary underline-offset-4 hover:underline active:translate-y-0',
       },
       size: {
         sm: 'h-8 px-3 text-[13px] [&_svg]:size-3.5',

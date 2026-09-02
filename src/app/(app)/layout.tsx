@@ -24,7 +24,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <MobileTopBar user={user} businessName={businessName} />
 
       <div className="lg:pl-[248px]">
-        <main className="mx-auto w-full max-w-[1180px] px-4 pb-24 pt-5 sm:px-6 sm:pt-7 lg:pb-10">{children}</main>
+        <main className="page-enter mx-auto w-full max-w-[1180px] px-4 pb-24 pt-5 sm:px-6 sm:pt-7 lg:pb-10">
+          {children}
+        </main>
       </div>
 
       <MobileTabBar />

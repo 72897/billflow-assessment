@@ -94,11 +94,11 @@ function PageLink({
   label: string
 }) {
   const className = cn(
-    'inline-flex h-8 min-w-8 items-center justify-center rounded-md border px-2 text-[13px] font-medium transition-colors [&_svg]:size-4',
+    'inline-flex h-8 min-w-8 select-none items-center justify-center rounded-md border px-2 text-[13px] font-medium shadow-xs transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out-quint active:translate-y-px [&_svg]:size-4',
     current
       ? 'border-primary bg-primary text-primary-foreground'
-      : 'border-border bg-card text-foreground hover:bg-muted',
-    disabled && 'pointer-events-none opacity-40',
+      : 'border-border bg-card text-foreground hover:border-border-strong hover:bg-secondary active:bg-muted active:shadow-none',
+    disabled && 'pointer-events-none opacity-40 shadow-none',
   )
 
   if (disabled) {

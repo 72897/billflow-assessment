@@ -54,13 +54,6 @@ function LoginForm({ redirectTo, demo = false }: LoginFormProps) {
     }
   }
 
-  function fillDemo() {
-    form.setValue('email', DEMO_EMAIL)
-    form.setValue('password', DEMO_PASSWORD)
-    form.clearErrors()
-    setFormError(null)
-  }
-
   return (
     <div>
       <div className="mb-5 sm:mb-6">
@@ -98,16 +91,6 @@ function LoginForm({ redirectTo, demo = false }: LoginFormProps) {
               {submitting ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
-
-          <div className="mt-5 rounded-md border border-border bg-muted/60 px-3 py-2.5">
-            <p className="text-2xs font-medium uppercase tracking-wide text-muted-foreground">Demo account</p>
-            <p className="mt-1 break-all text-[13px] text-foreground">
-              {DEMO_EMAIL} <span className="text-muted-foreground">/</span> {DEMO_PASSWORD}
-            </p>
-            <Button type="button" variant="link" size="sm" className="mt-1 h-auto p-0" onClick={fillDemo}>
-              Fill these in
-            </Button>
-          </div>
         </CardContent>
       </Card>
 

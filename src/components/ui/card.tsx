@@ -1,10 +1,23 @@
 import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
-const Card = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Marks a card that is itself a link or a button. It rises one pixel on hover
+   * and firms up its border, so a clickable card announces itself before the
+   * cursor turns into a hand.
+   */
+  interactive?: boolean
+}
+
+const Card = forwardRef<HTMLDivElement, CardProps>(({ className, interactive, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('rounded-lg border border-border bg-card text-card-foreground shadow-card', className)}
+    className={cn(
+      'rounded-lg border border-border bg-card text-card-foreground shadow-card',
+      interactive && 'surface-interactive',
+      className,
+    )}
     {...props}
   />
 ))

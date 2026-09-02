@@ -21,7 +21,7 @@ const Table = forwardRef<HTMLTableElement, React.TableHTMLAttributes<HTMLTableEl
 Table.displayName = 'Table'
 
 const TableHeader = forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
-  ({ className, ...props }, ref) => <thead ref={ref} className={cn('bg-muted/60', className)} {...props} />,
+  ({ className, ...props }, ref) => <thead ref={ref} className={cn('bg-secondary/70', className)} {...props} />,
 )
 TableHeader.displayName = 'TableHeader'
 
@@ -32,13 +32,23 @@ const TableBody = forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLT
 )
 TableBody.displayName = 'TableBody'
 
+/**
+ * `group` on an interactive row lets a cell react to a hover anywhere in it —
+ * the chevron that fades in at the end of an invoice row, for instance. The
+ * `focus-within` state matters as much as the hover: tabbing through a list
+ * should highlight the row you have landed in, not just outline one link.
+ */
 const TableRow = forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement> & { interactive?: boolean }
 >(({ className, interactive, ...props }, ref) => (
   <tr
     ref={ref}
-    className={cn('transition-colors', interactive && 'cursor-pointer hover:bg-muted/50', className)}
+    className={cn(
+      'transition-colors duration-100',
+      interactive && 'group cursor-pointer hover:bg-secondary/70 focus-within:bg-secondary/70',
+      className,
+    )}
     {...props}
   />
 ))

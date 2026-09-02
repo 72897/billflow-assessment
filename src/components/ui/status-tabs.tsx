@@ -67,17 +67,17 @@ function StatusTabs({ param = 'status', tabs, neutralValue = 'all', label = 'Fil
             aria-selected={selected}
             onClick={() => select(tab.value)}
             className={cn(
-              'flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors',
+              'flex shrink-0 select-none items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-150',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
               selected
-                ? 'bg-foreground text-background'
-                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                ? 'bg-foreground text-background shadow-xs'
+                : 'text-muted-foreground hover:bg-secondary hover:text-foreground active:bg-muted',
             )}
           >
             {tab.label}
             <span
               className={cn(
-                'tabular rounded px-1 text-2xs font-semibold',
+                'tabular rounded px-1 text-2xs font-semibold transition-colors duration-150',
                 selected ? 'bg-background/20 text-background' : 'bg-muted text-muted-foreground',
               )}
             >

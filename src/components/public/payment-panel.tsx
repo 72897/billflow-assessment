@@ -193,8 +193,8 @@ function PaymentPanel({
         <p className="mt-4 flex items-start gap-2 text-[13px] leading-relaxed text-muted-foreground">
           <ShieldCheck className="mt-0.5 size-3.5 shrink-0" aria-hidden />
           <span>
-            Payments on this demo are simulated — no card details are collected and no money moves. Paying marks the
-            invoice as settled and issues a receipt.
+            No card details are collected or stored on this page. Confirming marks the invoice as settled and emails you
+            a receipt.
           </span>
         </p>
       </section>

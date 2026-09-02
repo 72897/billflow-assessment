@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { ArrowRight, Check, Clock, FileText, Send, Wallet } from 'lucide-react'
+import { ArrowRight, Check, Clock, FileText, Plus, Send, Wallet } from 'lucide-react'
 import { Logo } from '@/components/shell/logo'
 import { StatusPill } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { APP_NAME, DEMO_EMAIL, DEMO_PASSWORD } from '@/lib/config'
+import { getSessionUser } from '@/lib/auth'
+import { APP_NAME } from '@/lib/config'
 import { formatMoneySymbol } from '@/lib/money'
 
 export const metadata = {
@@ -118,19 +119,42 @@ function InvoicePreview() {
   )
 }
 
-export default function LandingPage() {
+/**
+ * The landing page answers to the session.
+ *
+ * Someone already signed in has no use for "Sign in" and "Create account" — the
+ * middleware would only bounce them off /login again — so the same page offers
+ * the way back into the app instead. Reading the cookie makes this route
+ * dynamic, which is the right trade: a marketing page that contradicts the
+ * user's own state looks broken in a way a cache hit does not repay.
+ */
+export default async function LandingPage() {
+  const user = await getSessionUser()
+  const signedIn = user !== null
+
   return (
     <div className="min-h-dvh bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-[1180px] items-center justify-between px-4 sm:px-6">
           <Logo href="/" />
           <nav className="flex items-center gap-2" aria-label="Account">
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/login">Sign in</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href="/signup">Create account</Link>
-            </Button>
+            {signedIn ? (
+              <Button asChild size="sm">
+                <Link href="/dashboard">
+                  Go to dashboard
+                  <ArrowRight />
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/login">Sign in</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href="/signup">Create account</Link>
+                </Button>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -155,24 +179,40 @@ export default function LandingPage() {
               </p>
 
               <div className="mt-7 flex flex-col gap-2.5 sm:flex-row sm:items-center">
-                <Button asChild size="lg">
-                  <Link href="/signup">
-                    Start invoicing
-                    <ArrowRight />
-                  </Link>
-                </Button>
-                <Button asChild variant="secondary" size="lg">
-                  <Link href="/login?demo=1">View demo</Link>
-                </Button>
+                {signedIn ? (
+                  <>
+                    <Button asChild size="lg">
+                      <Link href="/dashboard">
+                        Go to dashboard
+                        <ArrowRight />
+                      </Link>
+                    </Button>
+                    <Button asChild variant="secondary" size="lg">
+                      <Link href="/invoices/new">
+                        <Plus />
+                        New invoice
+                      </Link>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button asChild size="lg">
+                      <Link href="/signup">
+                        Start invoicing
+                        <ArrowRight />
+                      </Link>
+                    </Button>
+                    <Button asChild variant="secondary" size="lg">
+                      <Link href="/login?demo=1">View demo</Link>
+                    </Button>
+                  </>
+                )}
               </div>
 
               <p className="mt-4 text-2xs leading-relaxed text-muted-foreground">
-                Demo account:{' '}
-                <span className="font-medium text-foreground">
-                  {DEMO_EMAIL} / {DEMO_PASSWORD}
-                </span>
-                <br />
-                Prefilled with clients, invoices and a paid public link, so there is something to look at immediately.
+                {signedIn
+                  ? 'You are signed in. Your dashboard has what is earned, outstanding and overdue right now.'
+                  : 'Free while you send your first invoices. No card, no setup call.'}
               </p>
             </div>
 
@@ -217,16 +257,27 @@ export default function LandingPage() {
         <section className="border-t border-border bg-card">
           <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-5 px-4 py-12 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-14">
             <div>
-              <h2 className="text-lg font-semibold tracking-[-0.02em] sm:text-xl">Send your first invoice today</h2>
+              <h2 className="text-lg font-semibold tracking-[-0.02em] sm:text-xl">
+                {signedIn ? 'Pick up where you left off' : 'Send your first invoice today'}
+              </h2>
               <p className="mt-1 text-[13px] text-muted-foreground sm:text-sm">
-                No card, no setup call. An account and a client is all it takes.
+                {signedIn
+                  ? 'Everything you have billed is a click away, with overdue kept current on its own.'
+                  : 'No card, no setup call. An account and a client is all it takes.'}
               </p>
             </div>
             <Button asChild size="lg" className="sm:shrink-0">
-              <Link href="/signup">
-                Create your account
-                <ArrowRight />
-              </Link>
+              {signedIn ? (
+                <Link href="/invoices">
+                  View your invoices
+                  <ArrowRight />
+                </Link>
+              ) : (
+                <Link href="/signup">
+                  Create your account
+                  <ArrowRight />
+                </Link>
+              )}
             </Button>
           </div>
         </section>
@@ -237,16 +288,29 @@ export default function LandingPage() {
           <div className="flex items-center gap-2">
             <Logo href="/" markOnly size="sm" />
             <span>
-              © {new Date().getFullYear()} {APP_NAME}. Built as a technical assessment project.
+              © {new Date().getFullYear()} {APP_NAME}. Invoicing for freelancers and small studios.
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="transition-colors hover:text-foreground">
-              Sign in
-            </Link>
-            <Link href="/signup" className="transition-colors hover:text-foreground">
-              Create account
-            </Link>
+            {signedIn ? (
+              <>
+                <Link href="/dashboard" className="transition-colors hover:text-foreground">
+                  Dashboard
+                </Link>
+                <Link href="/invoices" className="transition-colors hover:text-foreground">
+                  Invoices
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="transition-colors hover:text-foreground">
+                  Sign in
+                </Link>
+                <Link href="/signup" className="transition-colors hover:text-foreground">
+                  Create account
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </footer>

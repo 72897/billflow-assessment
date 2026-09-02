@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import { StatusPill } from '@/components/ui/badge'
+import { SortHead } from '@/components/ui/sort-head'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableWrap } from '@/components/ui/table'
 import { dueDescription } from '@/lib/invoice/status'
 import { formatMoney } from '@/lib/money'
@@ -13,6 +14,13 @@ export interface InvoiceTableProps {
   showClient?: boolean
   /** Adds the due-date column; the dashboard's compact table leaves it out. */
   showDueDate?: boolean
+  /**
+   * Turns the column headers into sort controls. Only the invoice list can
+   * honour them — the dashboard and the client page show a fixed slice, and a
+   * header that rewrote `?sort=` there would sort a list the user cannot see the
+   * rest of.
+   */
+  sortable?: boolean
   className?: string
 }
 
@@ -27,26 +35,64 @@ export interface InvoiceTableProps {
  * target beats a 12px one, and it means the mobile card and the desktop row
  * behave the same way.
  */
-function InvoiceTable({ invoices, showClient = true, showDueDate = true, className }: InvoiceTableProps) {
+function InvoiceTable({
+  invoices,
+  showClient = true,
+  showDueDate = true,
+  sortable = false,
+  className,
+}: InvoiceTableProps) {
   return (
     <div className={className}>
       <TableWrap className="hidden sm:block">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Invoice</TableHead>
+              {sortable ? (
+                <SortHead asc="number_asc" desc="number_desc">
+                  Invoice
+                </SortHead>
+              ) : (
+                <TableHead>Invoice</TableHead>
+              )}
               {showClient ? <TableHead>Client</TableHead> : null}
-              <TableHead>Issued</TableHead>
-              {showDueDate ? <TableHead>Due</TableHead> : null}
-              <TableHead className="text-right">Amount</TableHead>
+              {sortable ? (
+                <SortHead asc="oldest" desc="newest" first="desc" fallback="newest">
+                  Issued
+                </SortHead>
+              ) : (
+                <TableHead>Issued</TableHead>
+              )}
+              {showDueDate ? (
+                sortable ? (
+                  <SortHead asc="due_date" desc="due_date_desc">
+                    Due
+                  </SortHead>
+                ) : (
+                  <TableHead>Due</TableHead>
+                )
+              ) : null}
+              {sortable ? (
+                <SortHead asc="amount_asc" desc="amount_desc" first="desc" align="right">
+                  Amount
+                </SortHead>
+              ) : (
+                <TableHead className="text-right">Amount</TableHead>
+              )}
               <TableHead>Status</TableHead>
+              <TableHead className="w-8 px-0">
+                <span className="sr-only">Open</span>
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {invoices.map((invoice) => (
               <TableRow key={invoice.id} interactive>
                 <TableCell className="font-medium">
-                  <Link href={`/invoices/${invoice.id}`} className="tabular block hover:text-primary">
+                  <Link
+                    href={`/invoices/${invoice.id}`}
+                    className="tabular block transition-colors duration-100 group-hover:text-primary"
+                  >
                     {invoice.invoiceNumber}
                   </Link>
                 </TableCell>
@@ -92,6 +138,14 @@ function InvoiceTable({ invoices, showClient = true, showDueDate = true, classNa
                     <StatusPill status={invoice.displayStatus} size="sm" />
                   </Link>
                 </TableCell>
+                <TableCell className="px-0">
+                  {/* Decorative: the row already links six times over, so this
+                      one is hidden from the tab order and the reading order and
+                      exists only to confirm on hover that the row is clickable. */}
+                  <Link href={`/invoices/${invoice.id}`} className="block pr-3" tabIndex={-1} aria-hidden>
+                    <ChevronRight className="size-4 text-muted-foreground opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100" />
+                  </Link>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -101,7 +155,10 @@ function InvoiceTable({ invoices, showClient = true, showDueDate = true, classNa
       <ul className="divide-y divide-border sm:hidden">
         {invoices.map((invoice) => (
           <li key={invoice.id}>
-            <Link href={`/invoices/${invoice.id}`} className="flex items-center gap-3 px-4 py-3.5 active:bg-muted/60">
+            <Link
+              href={`/invoices/${invoice.id}`}
+              className="flex items-center gap-3 px-4 py-3.5 transition-colors duration-100 active:bg-secondary"
+            >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="tabular text-[13px] font-semibold">{invoice.invoiceNumber}</span>

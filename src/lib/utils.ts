@@ -86,15 +86,21 @@ export function initials(name: string | null | undefined, fallback = '?'): strin
   return `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
 }
 
-/** Deterministic avatar tint, so a given client always looks the same. */
+/**
+ * Deterministic avatar tint, so a given client always looks the same.
+ *
+ * Six hues, but one recipe: every tint is the same low saturation and the same
+ * lightness, so a list of clients reads as one muted family rather than a bag of
+ * highlighter pens. Only the hue rotates — which is enough to tell two clients
+ * apart at a glance without any of them shouting.
+ */
 const AVATAR_TINTS = [
-  'bg-blue-50 text-blue-700 ring-blue-100',
-  'bg-violet-50 text-violet-700 ring-violet-100',
-  'bg-emerald-50 text-emerald-700 ring-emerald-100',
-  'bg-amber-50 text-amber-700 ring-amber-100',
-  'bg-rose-50 text-rose-700 ring-rose-100',
-  'bg-cyan-50 text-cyan-700 ring-cyan-100',
-  'bg-indigo-50 text-indigo-700 ring-indigo-100',
+  'bg-[hsl(240_45%_96%)] text-[hsl(240_35%_40%)] ring-[hsl(240_35%_89%)]',
+  'bg-[hsl(200_45%_96%)] text-[hsl(200_38%_36%)] ring-[hsl(200_35%_87%)]',
+  'bg-[hsl(165_40%_96%)] text-[hsl(165_38%_31%)] ring-[hsl(165_30%_85%)]',
+  'bg-[hsl(280_40%_96%)] text-[hsl(280_30%_42%)] ring-[hsl(280_28%_89%)]',
+  'bg-[hsl(28_50%_96%)] text-[hsl(28_45%_35%)] ring-[hsl(28_45%_87%)]',
+  'bg-[hsl(340_45%_96%)] text-[hsl(340_35%_42%)] ring-[hsl(340_35%_89%)]',
 ]
 
 export function avatarTint(seed: string | null | undefined): string {

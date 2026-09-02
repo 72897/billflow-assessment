@@ -17,7 +17,7 @@ const DialogOverlay = forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      'fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-[2px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
+      'fixed inset-0 z-50 bg-foreground/25 backdrop-blur-[2px] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:duration-150 data-[state=open]:duration-200',
       className,
     )}
     {...props}
@@ -52,6 +52,7 @@ const DialogContent = forwardRef<React.ElementRef<typeof DialogPrimitive.Content
         className={cn(
           'fixed inset-x-0 bottom-0 z-50 flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-pop outline-none',
           'data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom',
+          'data-[state=closed]:duration-150 data-[state=open]:duration-200 data-[state=open]:ease-out-expo',
           'sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-h-[88vh] sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-xl',
           'sm:data-[state=closed]:slide-out-to-bottom-0 sm:data-[state=open]:slide-in-from-bottom-0 sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95',
           SIZES[size],
@@ -62,7 +63,7 @@ const DialogContent = forwardRef<React.ElementRef<typeof DialogPrimitive.Content
         {children}
         {hideClose ? null : (
           <DialogPrimitive.Close
-            className="absolute right-3.5 top-3.5 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="absolute right-3.5 top-3.5 rounded-md p-1 text-muted-foreground transition-colors duration-150 hover:bg-secondary hover:text-foreground active:bg-muted"
             aria-label="Close"
           >
             <X className="size-4" />
