@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Design tokens.
+ *
+ * Every colour the app uses is declared here as HSL channels and consumed
+ * through `tailwind.config.ts`, so a shade is never hard-coded in a component
+ * and the whole palette can be retuned from one file.
+ */
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 243 75% 59%;
+    --primary-hover: 245 58% 51%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 243 75% 59%;
+
+    --success: 158 64% 32%;
+    --success-foreground: 0 0% 100%;
+    --success-subtle: 152 81% 96%;
+    --success-border: 152 76% 80%;
+
+    --warning: 26 90% 37%;
+    --warning-foreground: 0 0% 100%;
+    --warning-subtle: 48 100% 96%;
+    --warning-border: 48 96% 77%;
+
+    --danger: 0 74% 42%;
+    --danger-foreground: 0 0% 100%;
+    --danger-subtle: 0 86% 97%;
+    --danger-border: 0 96% 89%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Numbers in tables and totals must line up column to column. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Only show focus rings for keyboard users, never on a mouse click. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+}
+
+@layer components {
+  /* The shimmer used by every skeleton, so loading states feel like one thing. */
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-muted;
+  }
+
+  .skeleton::after {
+    @apply absolute inset-0 -translate-x-full;
+    content: '';
+    background-image: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+    animation: shimmer 1.6s infinite;
+  }
+
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Filter strips scroll sideways on a phone; a visible bar there reads as a bug. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/**
+ * Print.
+ *
+ * The download is a real PDF, but Ctrl-P on an invoice page should still produce
+ * something a person would post. Chrome and the app share one rule set: hide
+ * everything interactive, drop to white, and never break a line item in half.
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  .no-print,
+  nav[data-app-nav],
+  aside[data-app-nav],
+  [data-print='hide'] {
+    display: none !important;
+  }
+
+  .print-plain {
+    box-shadow: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  tr,
+  [data-print='keep'] {
+    break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}

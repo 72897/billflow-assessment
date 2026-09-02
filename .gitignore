@@ -1,0 +1,50 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+build/
+next-env.d.ts
+
+# production
+dist/
+
+# misc
+.DS_Store
+*.pem
+Thumbs.db
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files — never commit real credentials
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# local embedded postgres data (PGlite)
+.pgdata/
+.pgdata-test/
+
+# captured outgoing mail when RESEND_API_KEY is not configured
+.mail/
+
+# uploaded business logos in local development
+public/uploads/
+
+# typescript
+*.tsbuildinfo
+
+# vercel
+.vercel
+
+# test output
+coverage/
