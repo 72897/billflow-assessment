@@ -22,6 +22,14 @@ export interface LineItemValues {
   rate: string
 }
 
+/** One row of the client picker - exactly what `listClientOptions` returns. */
+export interface ClientOption {
+  id: string
+  name: string
+  company: string
+  email: string
+}
+
 export interface InvoiceFormValues {
   clientId: string
   invoiceNumber: string

@@ -172,14 +172,20 @@ function systemPrompt(context: DraftContext): string {
     '- "6 hours at 1500" is quantity "6", rate "1500" - never multiply them out.',
     '- Split distinct pieces of work into separate items. Keep `description` short, like a line on a bill.',
     '- `detail` is an optional second line. Use it only to add information the description does not already carry; otherwise return an empty string. Never repeat the description.',
-    '- Never invent work, amounts, quantities or clients that the note does not mention. Leave a field null rather than guessing.',
+    '- Never invent work, amounts, quantities or a client the note does not name. Leave a field null rather than guessing.',
+    '- `clientName` is whoever the note says the invoice is for, copied from the note. Null only when the note names nobody.',
     '- If a tax is named (GST, VAT, sales tax), put its percentage in `taxRatePercent` as a string. Otherwise null.',
     '- A discount is `percentage` when written with % and `fixed` when it is an amount. `discountValue` is the bare number.',
     '- "net 30", "due in 2 weeks", "payable within 10 days" all set `dueInDays` as an integer number of days.',
     '- `notes` is for a message to the client that is not a line item. Usually null.',
     '- `summary` is one short sentence, addressed to the freelancer, saying what you filled in.',
     '',
-    names ? `The user's existing clients: ${names}. Return the client's name exactly as listed when the note refers to one of them.` : 'The user has no clients yet.',
+    // A name that is not on the list is not an error to be swallowed: the app
+    // offers to create that client, so the model must hand the name back rather
+    // than deciding it must have misread it.
+    names
+      ? `The user's existing clients: ${names}. Spell \`clientName\` exactly as listed when the note refers to one of them, and exactly as the note writes it when it does not.`
+      : 'The user has no clients yet, so no name will match - return the one the note gives.',
     `Today is ${context.today}. The default currency is ${context.currency}; only set \`currency\` if the note clearly names a different one.`,
     `Their usual payment terms are ${context.paymentTermsDays} days, but leave \`dueInDays\` null unless the note mentions timing.`,
     context.defaultTaxRate > 0
@@ -238,7 +244,8 @@ function comparable(value: string): string {
  * client the caller already loaded for this user.
  *
  * An unmatched name is not an error - it is how "for a new client" reads - so it
- * comes back as `unknown` with the name intact, and the UI offers to add them.
+ * comes back as `unknown` with the name intact, and the UI offers to create them
+ * with it prefilled.
  */
 function matchClient(
   name: string | null,
@@ -356,10 +363,10 @@ function assemble(parts: DraftParts, context: DraftContext, source: 'model' | 'r
 
   const dueInDays = parts.dueInDays === null ? null : clamp(Math.round(parts.dueInDays), 0, 365)
 
+  // No warning for an unmatched name. `clientMatch` and `clientName` say it in a
+  // form the UI can act on, and it does: the composer offers to create them,
+  // which is a better answer than a sentence telling somebody to go and do it.
   const { clientId, clientName, clientMatch } = matchClient(parts.clientName, context.clients)
-  if (clientMatch === 'unknown' && clientName) {
-    warnings.push(`“${clientName}” is not one of your clients yet - choose one, or add them first.`)
-  }
 
   const summary =
     collapse(parts.summary, 240) ||

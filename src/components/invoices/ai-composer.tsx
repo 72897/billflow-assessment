@@ -1,8 +1,9 @@
 'use client'
 
-import { Mic, RotateCcw, Square, TriangleAlert } from 'lucide-react'
+import { Mic, RotateCcw, Square, TriangleAlert, UserPlus } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { NewClientDialog } from '@/components/clients/new-client-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { FormError } from '@/components/ui/error-state'
@@ -10,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { apiFetch, errorMessage } from '@/lib/api/client'
 import { addDaysToIsoDate } from '@/lib/utils'
 import { MAX_NOTE_LENGTH } from '@/lib/validation/ai'
-import type { InvoiceFormValues } from './invoice-form-values'
+import type { ClientOption, InvoiceFormValues } from './invoice-form-values'
 
 /** Mirrors `InvoiceDraft` on the server, minus the fields the form does not use. */
 interface DraftResponse {
@@ -40,6 +41,15 @@ const EXAMPLES = [
 /** A recording longer than this is a monologue, not an invoice. */
 const MAX_RECORDING_MS = 60_000
 
+export interface AiComposerProps {
+  /**
+   * Called with a client this composer created for a name the account did not
+   * have. The parent owns the picker's options, so it decides how the new row
+   * joins the list and gets selected.
+   */
+  onClientCreated: (client: ClientOption) => void
+}
+
 /**
  * The AI composer: a note in, a filled-in invoice out.
  *
@@ -50,11 +60,24 @@ const MAX_RECORDING_MS = 60_000
  * identical server-side totals as one built by hand. Nothing is stored until the
  * usual Save.
  *
+ * The one exception is a client the note names that the account does not have.
+ * The draft never invents one - `clientId` only ever comes from the user's own
+ * list - so an unmatched name is reported back as `unknown`, and this offers to
+ * create it. That is a real write, made deliberately by a button press, with the
+ * email, phone and address typed by the person who knows them.
+ *
  * `form.reset()` rather than a series of `setValue` calls: the line items are a
  * `useFieldArray`, and only a reset re-keys the rows so the new items render.
  * The values it had first are kept, so Undo is exact.
+ *
+ * Both resets pass `keepFieldsRef`. A plain reset empties the form's field
+ * registry; inputs spread from `register()` put themselves back on the next
+ * render, but a `Controller` registers once, so anything that writes to the
+ * client or currency picker in the same tick as a reset would update the value
+ * and notify nobody. Keeping the registry costs nothing and removes the whole
+ * question.
  */
-function AiComposer() {
+function AiComposer({ onClientCreated }: AiComposerProps) {
   const form = useFormContext<InvoiceFormValues>()
 
   const [text, setText] = useState('')
@@ -63,6 +86,9 @@ function AiComposer() {
   const [result, setResult] = useState<{ summary: string; warnings: string[]; source: 'model' | 'rules' } | null>(null)
   const [recording, setRecording] = useState(false)
   const [canRecord, setCanRecord] = useState(false)
+  /** The name the note used, when it is nobody on the account yet. */
+  const [missingClient, setMissingClient] = useState<string | null>(null)
+  const [addingClient, setAddingClient] = useState(false)
 
   const recorder = useRef<MediaRecorder | null>(null)
   const undoTo = useRef<InvoiceFormValues | null>(null)
@@ -96,21 +122,31 @@ function AiComposer() {
             ? addDaysToIsoDate(current.issueDate, draft.dueInDays)
             : current.dueDate,
       },
-      { keepDefaultValues: true },
+      { keepDefaultValues: true, keepFieldsRef: true },
     )
 
     const warnings = [...draft.warnings]
     if (draft.clientMatch === 'partial' && draft.clientName) {
       warnings.unshift(`Billed to ${draft.clientName} - change it above if that is the wrong client.`)
     }
+    setMissingClient(draft.clientMatch === 'unknown' ? draft.clientName : null)
     setResult({ summary: draft.summary, warnings, source: draft.source })
+  }
+
+  function clientCreated(client: ClientOption) {
+    onClientCreated(client)
+    setMissingClient(null)
+    // Undo restores the form as it was, but this client now exists for real -
+    // emptying the field it was created for is not what Undo means here.
+    if (undoTo.current) undoTo.current = { ...undoTo.current, clientId: client.id }
   }
 
   function undo() {
     if (!undoTo.current) return
-    form.reset(undoTo.current, { keepDefaultValues: true })
+    form.reset(undoTo.current, { keepDefaultValues: true, keepFieldsRef: true })
     undoTo.current = null
     setResult(null)
+    setMissingClient(null)
   }
 
   async function generate(note: string) {
@@ -120,6 +156,7 @@ function AiComposer() {
     setBusy('draft')
     setError(null)
     setResult(null)
+    setMissingClient(null)
     try {
       const { draft } = await apiFetch<DraftResponse>('/api/ai/invoice-draft', {
         method: 'POST',
@@ -291,6 +328,26 @@ function AiComposer() {
           <div className="grid gap-2 rounded-md border border-info-border bg-info-subtle px-3 py-2.5 text-[13px] leading-relaxed animate-fade-in-up">
             <p className="text-foreground">{result.summary}</p>
 
+            {/*
+             * The draft cannot select a client it did not find, and it must not
+             * invent one - so the offer is here, next to the sentence that says
+             * why. Creating them selects them on this invoice.
+             */}
+            {missingClient ? (
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 rounded-md border border-warning-border bg-warning-subtle px-2.5 py-2">
+                <span className="flex items-start gap-2 text-foreground">
+                  <TriangleAlert className="mt-0.5 size-3.5 shrink-0 text-warning" aria-hidden />
+                  <span>
+                    <strong className="font-semibold">{missingClient}</strong> is not one of your clients yet.
+                  </span>
+                </span>
+                <Button type="button" size="sm" variant="secondary" onClick={() => setAddingClient(true)}>
+                  <UserPlus />
+                  Add them
+                </Button>
+              </div>
+            ) : null}
+
             {result.warnings.length > 0 ? (
               <ul className="grid gap-1.5">
                 {result.warnings.map((warning) => (
@@ -310,6 +367,13 @@ function AiComposer() {
           </div>
         ) : null}
       </CardContent>
+
+      <NewClientDialog
+        open={addingClient}
+        onOpenChange={setAddingClient}
+        defaultName={missingClient ?? ''}
+        onCreated={clientCreated}
+      />
     </Card>
   )
 }

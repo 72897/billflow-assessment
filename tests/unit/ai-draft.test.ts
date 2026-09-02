@@ -107,12 +107,13 @@ describe('draftFromRules - the rest of the invoice', () => {
     expect(draft.items[0]!.description).toBe('Logo')
   })
 
-  it('never invents a client id, and says so instead', () => {
+  it('never invents a client id, and hands the name back to be created', () => {
     const draft = draftFromRules('logo 20000 for Globex Corporation', context())
 
     expect(draft.clientId).toBeNull()
     expect(draft.clientMatch).toBe('unknown')
-    expect(draft.warnings.join(' ')).toContain('Globex Corporation')
+    // What the composer prefills its "add this client" dialog with.
+    expect(draft.clientName).toBe('Globex Corporation')
   })
 
   it('reads a fixed discount and a currency the note names', () => {

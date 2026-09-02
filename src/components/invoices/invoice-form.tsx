@@ -2,11 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Save, Send, UserPlus } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
+import { NewClientDialog } from '@/components/clients/new-client-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
@@ -29,11 +29,11 @@ import { addDaysToIsoDate, cn, formatDate } from '@/lib/utils'
 import { createInvoiceSchema } from '@/lib/validation/invoice'
 import type { InvoiceDetail } from '@/types'
 import { AiComposer } from './ai-composer'
-import { toInvoicePayload, type InvoiceFormValues } from './invoice-form-values'
+import { toInvoicePayload, type ClientOption, type InvoiceFormValues } from './invoice-form-values'
 import { InvoiceLineItems } from './invoice-line-items'
 
 export interface InvoiceFormProps {
-  clients: Array<{ id: string; name: string; company: string; email: string }>
+  clients: ClientOption[]
   defaultValues: InvoiceFormValues
   /** Present when editing an existing invoice, absent when creating one. */
   invoice?: InvoiceDetail
@@ -58,12 +58,37 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
   // Which button is busy. Two submit buttons sharing `isSubmitting` would put a
   // spinner on both, including the one nobody pressed.
   const [pendingAction, setPendingAction] = useState<'draft' | 'send' | null>(null)
+  const [addingClient, setAddingClient] = useState(false)
+  /** Clients added from this page, before the server props catch up. */
+  const [created, setCreated] = useState<ClientOption[]>([])
   const editing = Boolean(invoice)
 
   const form = useForm<InvoiceFormValues>({
     resolver: zodResolver(createInvoiceSchema, undefined, { raw: true }),
     defaultValues,
   })
+
+  /**
+   * The picker's rows: the ones the server rendered, plus any added here.
+   *
+   * Merged rather than replaced, because both can be true at once - a
+   * `router.refresh()` eventually brings the new client down in `clients`, and
+   * until it does the local copy is the only one that exists. Deduplicated by id
+   * so the overlap is invisible, and sorted by name the way `listClientOptions`
+   * orders it, so a client added now sits where it will sit on the next load.
+   */
+  const clientOptions = useMemo(() => {
+    if (created.length === 0) return clients
+    const extra = created.filter((option) => !clients.some((client) => client.id === option.id))
+    if (extra.length === 0) return clients
+    return [...clients, ...extra].sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }))
+  }, [clients, created])
+
+  /** Selects a client the moment it exists, whoever created it. */
+  function selectClient(client: ClientOption) {
+    setCreated((current) => (current.some((option) => option.id === client.id) ? current : [...current, client]))
+    form.setValue('clientId', client.id, { shouldValidate: true, shouldDirty: true })
+  }
 
   const { control } = form
   const items = useWatch({ control, name: 'items' })
@@ -91,7 +116,7 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
   )
 
   const submitting = form.formState.isSubmitting
-  const noClients = clients.length === 0
+  const noClients = clientOptions.length === 0
   const symbol = currencySymbol(currency)
   const taxBasisPoints = parseRateToBasisPoints(taxRate) ?? 0
   const discountBasisPoints = discountType === 'percentage' ? (parseRateToBasisPoints(discountValue) ?? 0) : 0
@@ -151,10 +176,10 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
             {/*
              * Create only. On an edit the draft would replace line items that have
              * already been sent to somebody, and an Undo button is thin protection
-             * against that. Hidden with no clients too, so the "add your first
-             * client" nudge below is the only thing to do on an empty account.
+             * against that. It is offered on an empty account, though: the note
+             * usually names the client, and it can now add them.
              */}
-            {editing || noClients ? null : <AiComposer />}
+            {editing ? null : <AiComposer onClientCreated={selectClient} />}
 
             <Card>
               <CardContent className="grid gap-4 pt-5">
@@ -163,10 +188,10 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
                 {noClients ? (
                   <p className="rounded-lg border border-warning-border bg-warning-subtle px-3.5 py-3 text-[13px] leading-relaxed text-warning">
                     An invoice needs someone to bill.{' '}
-                    <Link href="/clients/new?returnTo=/invoices/new" className="font-semibold underline">
+                    <button type="button" onClick={() => setAddingClient(true)} className="font-semibold underline">
                       Add your first client
-                    </Link>{' '}
-                    and you will come straight back here.
+                    </button>{' '}
+                    - a name is enough - and they will be picked here without losing what you have typed.
                   </p>
                 ) : null}
 
@@ -176,12 +201,29 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
                       control={control}
                       name="clientId"
                       render={({ field }) => (
-                        <Select value={field.value || undefined} onValueChange={field.onChange} disabled={noClients}>
+                        <Select
+                          value={field.value || undefined}
+                          /*
+                           * Radix keeps a hidden native `<select>` beside this one for
+                           * form autofill, and collects its `<option>`s from the items
+                           * as they mount. On the single render where a just-created
+                           * client is both added to the list and selected, that element
+                           * is handed a value no option has yet, falls back to its
+                           * empty first one, and reports the fallback back as a change
+                           * of `''` - which would overwrite the id just set. There is no
+                           * empty item here, so `''` is never a choice anyone made.
+                           * Without this, creating a client from the button or from the
+                           * AI composer left "Choose a client" sitting over a form whose
+                           * value had been right for about fifteen milliseconds.
+                           */
+                          onValueChange={(next) => next && field.onChange(next)}
+                          disabled={noClients}
+                        >
                           <FieldSelectTrigger onBlur={field.onBlur}>
                             <SelectValue placeholder="Choose a client" />
                           </FieldSelectTrigger>
                           <SelectContent>
-                            {clients.map((client) => (
+                            {clientOptions.map((client) => (
                               <SelectItem key={client.id} value={client.id}>
                                 {client.company ? `${client.name} · ${client.company}` : client.name}
                               </SelectItem>
@@ -202,15 +244,16 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
                   </Field>
                 </FieldRow>
                 {noClients || editing ? null : (
-                  // Only offered while creating: leaving mid-edit would drop the
-                  // changes, and an edit already has a client attached.
-                  <Link
-                    href="/clients/new?returnTo=/invoices/new"
+                  // A dialog rather than the full screen: leaving mid-edit would
+                  // drop everything typed so far. An edit already has a client.
+                  <button
+                    type="button"
+                    onClick={() => setAddingClient(true)}
                     className="-mt-1 flex w-fit items-center gap-1.5 text-[13px] font-medium text-primary hover:underline"
                   >
                     <UserPlus className="size-3.5" aria-hidden />
                     Add a new client
-                  </Link>
+                  </button>
                 )}
 
                 <div className="grid gap-4 sm:grid-cols-3">
@@ -397,6 +440,7 @@ function InvoiceForm({ clients, defaultValues, invoice }: InvoiceFormProps) {
           </Card>
         </div>
       </form>
+      <NewClientDialog open={addingClient} onOpenChange={setAddingClient} onCreated={selectClient} />
       <ConfirmDialog
         open={confirming !== null}
         onOpenChange={(open) => {
