@@ -1,10 +1,39 @@
 # BillFlow
 
-Invoicing for freelancers and small studios. Create a client, build an invoice,
-send it as a link, and get paid - without the client needing an account.
+**Invoicing for freelancers and small studios** - create a client, build an
+invoice, send it as a link, and get paid, all without the client needing an
+account.
 
-Built with Next.js 15 App Router, React 19, TypeScript (strict), Tailwind, and
-PostgreSQL with real migration files.
+Built by **Kunal Singh** with Next.js 15 App Router, React 19, TypeScript
+(strict), Tailwind and PostgreSQL, with real SQL migration files.
+
+---
+
+## The problem it solves
+
+Most freelance billing lives in a word processor and a spreadsheet: last job's
+invoice copied and edited, the number typed by hand, the total worked out on a
+calculator, a PDF attached to an email, and a sheet somewhere that is meant to
+record who has paid. It holds up until the work does.
+
+- **Numbers collide or skip.** Two invoices raised the same afternoon get the
+  same number, and nobody notices until an accountant does.
+- **Totals are typed, not derived.** A tax rate applied to the wrong subtotal, or
+  a discount taken twice, goes out under your name.
+- **Nobody knows what is actually outstanding.** "Overdue" means opening every
+  file and comparing its due date against today.
+- **Getting paid adds friction.** The client is asked to sign up for something,
+  or to reply to an email, to settle a bill they already agreed to.
+- **Chasing is manual.** A reminder goes out when you happen to remember it.
+
+BillFlow answers those one for one. Invoice numbers are allocated by a Postgres
+function holding a row lock, so two created at the same instant cannot collide.
+Every total is recomputed on the server from the line items, in integer minor
+units - never a float. **Overdue is derived in SQL** from the due date instead of
+being stored, so an invoice becomes overdue on its own with no cron job and
+nobody clicking anything. The client pays through a tokenised public link with no
+account and no sign-up wall. And the dashboard opens on what is owed, what is
+late and what to chase next, with a reminder one click away.
 
 ---
 
@@ -12,6 +41,7 @@ PostgreSQL with real migration files.
 
 | | |
 |---|---|
+| **Repository** | https://github.com/72897/billflow-assessment |
 | **App** | _fill in after deploying - see [DEPLOY.md](DEPLOY.md)_ |
 | **Sign in** | `demo@billflow.app` / `Billflow@123` |
 | **Public invoice link** | `/i/<token>` - printed by `npm run db:seed`, also copyable from any sent invoice |
@@ -207,7 +237,7 @@ total is only ever used as an optimistic-concurrency check.
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm test` | Vitest - 145 tests across calc, money, validation, the AI parsers, invoices, clients, settings, auth |
+| `npm test` | Vitest - 146 tests across calc, money, validation, the AI parsers, invoices, clients, settings, auth |
 
 The test suite runs against a throwaway PGlite database, so it needs no
 services. Integration coverage includes double-pay idempotency, stale-total
@@ -299,6 +329,10 @@ money has moved. Swapping in Stripe or Razorpay means replacing one repository
 call: the row locking, the payment ledger and the idempotency key that makes a
 double-tapped Pay button settle once are already in place.
 
+---
 
+## Author
 
+**Kunal Singh** - built as a full-stack technical assessment. The commit history
+is the build log: each commit is one decision, with the reasoning in its message.
 
