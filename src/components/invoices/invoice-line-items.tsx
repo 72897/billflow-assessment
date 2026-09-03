@@ -36,7 +36,7 @@ const MOBILE_LABEL = 'mb-1 block text-2xs font-semibold uppercase tracking-wide 
  */
 function InvoiceLineItems({ currency, amounts, disabled }: InvoiceLineItemsProps) {
   const form = useFormContext<InvoiceFormValues>()
-  const { fields, append, remove } = useFieldArray({ control: form.control, name: 'items' })
+  const { fields, append, remove, update } = useFieldArray({ control: form.control, name: 'items' })
   // Keyed by the field array's own id, so removing a row cannot hand its
   // "detail is open" state to whichever row slides into that index.
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -44,10 +44,27 @@ function InvoiceLineItems({ currency, amounts, disabled }: InvoiceLineItemsProps
   const errors = form.formState.errors.items
   const symbol = currencySymbol(currency)
   const atLimit = fields.length >= MAX_ITEMS
+  const onlyRow = fields.length === 1
 
   function addRow() {
     if (atLimit || disabled) return
     append({ ...EMPTY_LINE_ITEM })
+  }
+
+  /**
+   * Empties the last remaining row rather than removing it.
+   *
+   * An invoice with nothing on it is not an invoice, so the schema requires a
+   * row and this cannot delete the only one - but grey out the bin on the row
+   * somebody wants rid of and the control reads as broken, with the reason
+   * hidden in a `title` they have to hover to find. Clearing the row does what
+   * pressing it meant. `update` rather than `setValue` because it reissues the
+   * row's key, so the "detail is open" state goes with the values.
+   */
+  function removeRow(index: number) {
+    if (disabled) return
+    if (onlyRow) update(index, { ...EMPTY_LINE_ITEM })
+    else remove(index)
   }
 
   return (
@@ -161,10 +178,10 @@ function InvoiceLineItems({ currency, amounts, disabled }: InvoiceLineItemsProps
                   type="button"
                   variant="ghost"
                   size="icon-sm"
-                  onClick={() => remove(index)}
-                  disabled={disabled || fields.length === 1}
-                  aria-label={`Remove line ${index + 1}`}
-                  title={fields.length === 1 ? 'An invoice needs at least one line' : 'Remove this line'}
+                  onClick={() => removeRow(index)}
+                  disabled={disabled}
+                  aria-label={onlyRow ? 'Clear line 1' : `Remove line ${index + 1}`}
+                  title={onlyRow ? 'Clear this line' : 'Remove this line'}
                   className="hover:bg-danger-subtle hover:text-danger"
                 >
                   <Trash2 />
