@@ -30,6 +30,8 @@ interface DraftResponse {
     warnings: string[]
     source: 'model' | 'rules'
   }
+  /** Whether this deployment has a key at all - see the note below `apply`. */
+  configured: boolean
 }
 
 const EXAMPLES = [
@@ -83,7 +85,12 @@ function AiComposer({ onClientCreated }: AiComposerProps) {
   const [text, setText] = useState('')
   const [busy, setBusy] = useState<'draft' | 'audio' | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<{ summary: string; warnings: string[]; source: 'model' | 'rules' } | null>(null)
+  const [result, setResult] = useState<{
+    summary: string
+    warnings: string[]
+    source: 'model' | 'rules'
+    configured: boolean
+  } | null>(null)
   const [recording, setRecording] = useState(false)
   const [canRecord, setCanRecord] = useState(false)
   /** The name the note used, when it is nobody on the account yet. */
@@ -103,7 +110,17 @@ function AiComposer({ onClientCreated }: AiComposerProps) {
     }
   }, [])
 
-  function apply(draft: DraftResponse['draft']) {
+  /**
+   * Writes a draft into the form.
+   *
+   * `configured` is carried alongside `source` because the two answer different
+   * questions and only both together explain what happened. The rules parser
+   * answers for four different reasons - no key, a rejected key, a model the key
+   * cannot reach, and a model that read the note as prose rather than work - and
+   * `source` alone cannot tell them apart. Blaming a missing key for all four
+   * sends somebody to the dashboard to fix a variable that was never the problem.
+   */
+  function apply(draft: DraftResponse['draft'], configured: boolean) {
     const current = form.getValues()
     undoTo.current = current
 
@@ -130,7 +147,7 @@ function AiComposer({ onClientCreated }: AiComposerProps) {
       warnings.unshift(`Billed to ${draft.clientName} - change it above if that is the wrong client.`)
     }
     setMissingClient(draft.clientMatch === 'unknown' ? draft.clientName : null)
-    setResult({ summary: draft.summary, warnings, source: draft.source })
+    setResult({ summary: draft.summary, warnings, source: draft.source, configured })
   }
 
   function clientCreated(client: ClientOption) {
@@ -158,11 +175,11 @@ function AiComposer({ onClientCreated }: AiComposerProps) {
     setResult(null)
     setMissingClient(null)
     try {
-      const { draft } = await apiFetch<DraftResponse>('/api/ai/invoice-draft', {
+      const { draft, configured } = await apiFetch<DraftResponse>('/api/ai/invoice-draft', {
         method: 'POST',
         body: JSON.stringify({ text: trimmed }),
       })
-      apply(draft)
+      apply(draft, configured)
     } catch (caught) {
       setError(errorMessage(caught, 'The assistant could not read that. Try naming the work and the amount.'))
     } finally {
@@ -360,9 +377,11 @@ function AiComposer({ onClientCreated }: AiComposerProps) {
             ) : null}
 
             <p className="text-2xs text-muted-foreground">
-              {result.source === 'rules'
-                ? 'Read by the built-in parser - no AI key is configured on this deployment. Check the amounts below.'
-                : 'Check the lines below, then Save.'}
+              {result.source === 'model'
+                ? 'Check the lines below, then Save.'
+                : result.configured
+                  ? 'Read by the built-in parser - the model could not turn this note into line items. Check the amounts below.'
+                  : 'Read by the built-in parser - no AI key is configured on this deployment. Check the amounts below.'}
             </p>
           </div>
         ) : null}

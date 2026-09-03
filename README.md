@@ -238,7 +238,7 @@ total is only ever used as an optimistic-concurrency check.
 | `npm run build` / `npm start` | Production build and serve |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
-| `npm test` | Vitest - 146 tests across calc, money, validation, the AI parsers, invoices, clients, settings, auth |
+| `npm test` | Vitest - 152 tests across calc, money, validation, the AI parsers and their error mapping, invoices, clients, settings, auth |
 
 The test suite runs against a throwaway PGlite database, so it needs no
 services. Integration coverage includes double-pay idempotency, stale-total
