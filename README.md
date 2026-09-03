@@ -42,7 +42,7 @@ late and what to chase next, with a reminder one click away.
 | | |
 |---|---|
 | **Repository** | https://github.com/72897/billflow-assessment |
-| **App** | _fill in after deploying - see [DEPLOY.md](DEPLOY.md)_ |
+| **App** | https://billflow-assessment.vercel.app |
 | **Sign in** | `demo@billflow.app` / `Billflow@123` |
 | **Public invoice link** | `/i/<token>` - printed by `npm run db:seed`, also copyable from any sent invoice |
 
