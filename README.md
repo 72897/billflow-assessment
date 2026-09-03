@@ -183,7 +183,8 @@ and `.env.example` contains only placeholders.
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `DATABASE_URL` | Production only | Postgres connection string. Blank locally → PGlite. |
+| `DATABASE_URL` | Production only | Postgres connection string. Blank locally → PGlite. On Supabase use the **transaction pooler** (port 6543): session mode on 5432 allows 15 client connections for the whole project and every serverless instance draws from that one allowance. |
+| `DATABASE_POOL_MAX` | No | Connections one process may hold. Defaults to 3 on serverless (each instance has its own pool) and 10 on a long-running server. |
 | `SESSION_SECRET` | Yes | 32+ random bytes. `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | `NEXT_PUBLIC_APP_URL` | Yes | Public origin used to build share links and email links. Must be the deployed origin in production, or share links will point at localhost. |
 | `SMTP_USER` / `SMTP_PASSWORD` | No | Mailbox used to send. The recommended setup: a plain mailbox reaches any recipient. With Gmail the password must be a [16-character app password](https://myaccount.google.com/apppasswords), not the account password. `EMAIL` / `EMAIL_PASSWORD` are accepted as aliases. |
@@ -283,9 +284,12 @@ Deployed on Vercel with Supabase Postgres. **[DEPLOY.md](DEPLOY.md) has the
 copy-pasteable version**; the outline is:
 
 1. Push to GitHub and import the repo on Vercel.
-2. Create a Supabase project. From **Connect → Session pooler** copy the
-   connection string (the pooler resolves over IPv4; the direct
-   `db.<ref>.supabase.co` host does not, which Vercel's build network needs).
+2. Create a Supabase project. From **Connect → Transaction pooler** copy the
+   connection string (port 6543). Both pooler ports resolve over IPv4, which the
+   direct `db.<ref>.supabase.co` host does not and Vercel's build network needs;
+   transaction mode is the one to use from serverless, because session mode on
+   5432 gives the whole project 15 client connections and a few warm instances
+   claim all of them.
 3. Set the environment variables on Vercel: `DATABASE_URL`, `SESSION_SECRET`,
    and - for real email - `SMTP_USER` / `SMTP_PASSWORD` (or `RESEND_API_KEY`)
    plus `EMAIL_FROM`. `NEXT_PUBLIC_APP_URL` is optional on Vercel - `appUrl()`

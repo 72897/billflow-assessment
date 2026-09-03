@@ -84,6 +84,58 @@ export function resolveSsl(connectionString: string): {
   return { connectionString: stripped, ssl: wantsSsl ? { rejectUnauthorized: false } : undefined }
 }
 
+/** True on hosts that serve each request from its own short-lived process. */
+function isServerless(): boolean {
+  return Boolean(
+    process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.FUNCTIONS_WORKER_RUNTIME,
+  )
+}
+
+/**
+ * How many connections one process may hold, and how long it may sit on an idle
+ * one.
+ *
+ * The figure that matters is not this one but this one multiplied by the number
+ * of processes, and serverless hides that multiplier: every warm instance is its
+ * own process with its own pool. Supabase's session-mode pooler hands out 15
+ * client slots for the entire project, so a pool of 10 is exhausted by the
+ * second instance - while Postgres itself sits at half of its 60-connection
+ * ceiling, so the wall is the pooler's, not the database's. A long-running
+ * server is a single process and can safely keep more.
+ */
+function poolLimits(): { max: number; idleTimeoutMillis: number } {
+  const serverless = isServerless()
+  const override = Number(process.env.DATABASE_POOL_MAX?.trim())
+  const max = Number.isFinite(override) && override > 0 ? Math.floor(override) : serverless ? 3 : 10
+  return { max, idleTimeoutMillis: serverless ? 10_000 : 30_000 }
+}
+
+/** Supabase publishes session mode on 5432 and transaction mode on 6543. */
+const SUPABASE_SESSION_POOLER = /pooler\.supabase\.com:5432/
+
+/**
+ * Names the pooler's connection ceiling when a query is refused because of it.
+ *
+ * `pg` surfaces it as a FATAL whose code (`XX000`) says nothing, and a Server
+ * Component render swallows the text in production - so the operator is left
+ * with an error digest and a page that says something went wrong. Saying which
+ * limit was hit, and which knob moves it, is the difference between a
+ * five-minute fix and an afternoon.
+ */
+function explainConnectionFailure(error: unknown, max: number): unknown {
+  const message = (error as { message?: string } | null)?.message ?? ''
+  if (!/max clients reached|too many clients|EMAXCONNSESSION/i.test(message)) return error
+
+  return new Error(
+    `Database connection pool exhausted: ${message}. Every server-rendered page needs a ` +
+      'connection, so this breaks whole screens rather than one feature. Supabase session ' +
+      'mode (port 5432) allows 15 clients across the whole project, shared by every ' +
+      'serverless instance; the transaction pooler (port 6543) multiplexes instead and is ' +
+      `what this workload wants. DATABASE_POOL_MAX caps one process (currently ${max}).`,
+    { cause: error },
+  )
+}
+
 async function createPgDatabase(rawConnectionString: string): Promise<Database> {
   const pgModule = await import('pg')
   const pg = (pgModule as unknown as { default?: typeof pgModule }).default ?? pgModule
@@ -94,11 +146,20 @@ async function createPgDatabase(rawConnectionString: string): Promise<Database> 
   types.setTypeParser(1082, (value: string) => value)
 
   const { connectionString, ssl } = resolveSsl(rawConnectionString)
+  const { max, idleTimeoutMillis } = poolLimits()
+
+  if (isServerless() && SUPABASE_SESSION_POOLER.test(connectionString)) {
+    console.warn(
+      '[db] DATABASE_URL points at Supabase session mode (port 5432), which caps the whole ' +
+        'project at 15 client connections shared by every serverless instance. Switch the port ' +
+        'to 6543 for the transaction pooler, which multiplexes.',
+    )
+  }
 
   const pool = new Pool({
     connectionString,
-    max: 10,
-    idleTimeoutMillis: 30_000,
+    max,
+    idleTimeoutMillis,
     connectionTimeoutMillis: 15_000,
     ssl,
   })
@@ -110,11 +171,20 @@ async function createPgDatabase(rawConnectionString: string): Promise<Database> 
   return {
     driver: 'pg',
     async query<T>(text: string, params?: readonly unknown[]) {
-      const res = await pool.query(text, params ? [...params] : undefined)
-      return normaliseRows<T>(res as never)
+      try {
+        const res = await pool.query(text, params ? [...params] : undefined)
+        return normaliseRows<T>(res as never)
+      } catch (error) {
+        throw explainConnectionFailure(error, max)
+      }
     },
     async exec(sql: string) {
-      const client = await pool.connect()
+      let client
+      try {
+        client = await pool.connect()
+      } catch (error) {
+        throw explainConnectionFailure(error, max)
+      }
       try {
         await client.query(sql)
       } finally {
@@ -122,7 +192,12 @@ async function createPgDatabase(rawConnectionString: string): Promise<Database> 
       }
     },
     async transaction<T>(fn: (tx: Queryable) => Promise<T>) {
-      const client = await pool.connect()
+      let client
+      try {
+        client = await pool.connect()
+      } catch (error) {
+        throw explainConnectionFailure(error, max)
+      }
       try {
         await client.query('BEGIN')
         const tx: Queryable = {

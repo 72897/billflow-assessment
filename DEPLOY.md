@@ -38,7 +38,7 @@ Copy the values from your local `.env.local` - same file, same lines.
 
 | Name | Value |
 |---|---|
-| `DATABASE_URL` | The Supabase **session pooler** string from `.env.local`. Host must be `aws-0-ap-southeast-1.pooler.supabase.com:5432` - the direct `db.<ref>.supabase.co` host is IPv6-only and Vercel cannot reach it. |
+| `DATABASE_URL` | The Supabase **transaction pooler** string from `.env.local`. Host must be `aws-0-ap-southeast-1.pooler.supabase.com:6543` - port **6543**, not 5432. Session mode on 5432 allows only 15 client connections for the whole project, shared by every serverless instance, and once they are gone every server-rendered page fails. The direct `db.<ref>.supabase.co` host is IPv6-only and Vercel cannot reach it at all. |
 | `SESSION_SECRET` | The 64-character hex string from `.env.local`. |
 | `SMTP_USER` | The sending mailbox from `.env.local` (`SMTP_USER`). |
 | `SMTP_PASSWORD` | The 16-character Gmail **app password** from `.env.local`. Not the account password; Gmail refuses that with `EAUTH`. |
